@@ -1,0 +1,309 @@
+/* ── Scène épinglée ─────────────────────────────────────── */
+.hero {
+  position: relative;
+  background: var(--nuit);
+}
+
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh; /* l'image remplit même quand la barre d'adresse se replie */
+  overflow: hidden;
+  background: var(--nuit);
+}
+
+.hero-layers,
+.hero-media {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-img,
+.hero-video,
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-dark,
+.hero-lit {
+  object-position: 58% 50%;
+}
+.hero-lit,
+.hero-media {
+  opacity: 0;
+  will-change: opacity;
+}
+
+.hero-poster {
+  transition: opacity 0.6s var(--ease-out);
+}
+.hero-poster.is-hidden {
+  opacity: 0;
+}
+
+/* Scrims localisés : seulement là où le texte se pose */
+.scrim {
+  position: absolute;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+.scrim-left {
+  inset: 0 auto 0 0;
+  width: 55%;
+  background: linear-gradient(to right, var(--scrim-soft), transparent);
+}
+.scrim-top {
+  inset: 0 0 auto 0;
+  height: 48%;
+  background: linear-gradient(to bottom, var(--scrim), transparent);
+}
+.scrim-bottom {
+  inset: auto 0 0 0;
+  height: 58%;
+  background: linear-gradient(to top, var(--nuit) 0%, var(--scrim) 38%, transparent);
+}
+
+/* ── Calque texte : borné au petit viewport (toujours visible) ── */
+.hero-copy {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100vh;
+  height: 100svh;
+  padding: 0 var(--gutter);
+}
+
+.blk {
+  position: absolute;
+  visibility: hidden;
+}
+
+/* :where() = spécificité 0 : .stat et .btn-outline gardent leur display */
+:where(.rise) {
+  display: inline-block;
+}
+
+.t-display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5.4vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--chrome);
+  text-wrap: balance;
+}
+.t-center {
+  text-align: center;
+}
+
+.t-sub {
+  margin: 1.25rem 0 0;
+  font-size: clamp(0.95rem, 1.25vw, 1.15rem);
+  letter-spacing: 0.04em;
+  color: var(--acier);
+}
+
+/* 10-35 % — gauche, dans le mur sombre au-dessus du capot */
+.blk-intro {
+  left: var(--gutter);
+  top: 20%;
+  max-width: min(26rem, 34vw);
+}
+
+/* 35-65 % — haut gauche, sous les néons du plafond */
+.blk-stats {
+  left: var(--gutter);
+  top: calc(var(--header-h) + 14vh);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: clamp(1.5rem, 3.6vw, 3.5rem);
+  margin: 0;
+}
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+  margin: 0;
+}
+.stat-value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.8vw, 3.75rem);
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+  white-space: nowrap;
+}
+.stat-unit {
+  margin-left: 0.35em;
+  font-family: var(--font-text);
+  font-size: 0.32em;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--acier);
+  vertical-align: 0.35em;
+}
+.stat-value .led {
+  max-width: 2.5rem;
+  margin-top: 0.7rem;
+}
+.stat-label {
+  margin-top: 0.6rem;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--acier);
+}
+.stats-note {
+  margin: 1.4rem 0 0;
+  font-size: 0.625rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--acier);
+  opacity: 0.8;
+}
+
+/* 65-100 % — centre bas, sous le volant */
+.blk-driver {
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: max(7vh, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 3vh, 2.25rem);
+}
+.blk-driver .t-display {
+  font-size: clamp(2.25rem, 4.6vw, 4.75rem);
+}
+.led-center {
+  margin-inline: auto;
+  transform-origin: center;
+}
+.btn-arrow {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-out);
+}
+.btn-outline:hover .btn-arrow {
+  transform: translateY(3px);
+}
+
+/* ── Indicateur de scroll ───────────────────────────────── */
+.hero-cue {
+  position: absolute;
+  left: 50%;
+  bottom: max(4vh, calc(env(safe-area-inset-bottom, 0px) + 1rem));
+  translate: -50% 0;
+}
+.hero-cue-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0;
+  animation: cue-in 1.2s 0.8s var(--ease-out) forwards;
+}
+.hero-cue-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--acier);
+  padding-left: 0.32em; /* compense le letter-spacing final */
+}
+.hero-cue-track {
+  position: relative;
+  width: 1px;
+  height: 2.75rem;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--acier) 30%, transparent);
+}
+.hero-cue-dot {
+  position: absolute;
+  inset: 0;
+  background: var(--rouge);
+  transform: translateY(-100%);
+  animation: cue-run 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes cue-in {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes cue-run {
+  0% {
+    transform: translateY(-100%);
+  }
+  55%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ── Version statique (prefers-reduced-motion) ──────────── */
+.hero--static .panel {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 32rem;
+  overflow: hidden;
+}
+.hero--static .hero-lit-static {
+  object-position: 58% 50%;
+}
+.hero--static .blk,
+.hero--static .scrim {
+  visibility: visible;
+  opacity: 1;
+}
+.hero--static .hero-copy {
+  height: 100%;
+}
+
+/* ── Tablette / mobile portrait : le texte monte dans le plafond sombre ── */
+@media (orientation: portrait) {
+  .blk-intro {
+    top: calc(var(--header-h) + 5svh);
+    max-width: none;
+    right: var(--gutter);
+  }
+  .blk-stats {
+    top: calc(var(--header-h) + 4svh);
+    right: var(--gutter);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .t-display {
+    font-size: clamp(2.25rem, 11vw, 3.25rem);
+  }
+  .blk-intro .t-display span.rise {
+    max-width: 7ch;
+  }
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .stat-value {
+    font-size: clamp(1.5rem, 7.4vw, 2.25rem);
+  }
+  .stat-unit {
+    display: block;
+    margin: 0.45rem 0 0;
+    font-size: 0.6875rem;
+    vertical-align: baseline;
+  }
+  .stat-label {
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+  }
+  .blk-driver .t-display {
+    font-size: clamp(2rem, 10vw, 2.75rem);
+  }
+}
