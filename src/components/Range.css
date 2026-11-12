@@ -1,0 +1,161 @@
+/* ── The Range : cartes empilées ───────────────────────── */
+.range {
+  padding: clamp(5rem, 14vh, 9rem) var(--gutter) clamp(2rem, 6vh, 4rem);
+  background: var(--nuit);
+}
+
+.range-head {
+  max-width: 40rem;
+  margin-bottom: clamp(3rem, 8vh, 5rem);
+}
+.range-title {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 5.4vw, 5.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.range-intro {
+  max-width: 38ch;
+  margin: 0;
+  color: var(--acier);
+  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  line-height: 1.7;
+}
+
+.range-cards {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Place sous la dernière carte : sans elle, la pile se décolle avant que la
+   3e carte soit posée. Un pseudo-élément et non un padding : le sticky est
+   borné par la boîte de contenu de la liste, le padding ne compte pas. */
+.range-cards::after {
+  content: '';
+  display: block;
+  height: clamp(5rem, 18vh, 12rem);
+}
+
+/* Desktop : la carte colle sous le header, la suivante la recouvre */
+.card {
+  position: sticky;
+  top: calc(var(--header-h) + clamp(1rem, 3vh, 2rem));
+}
+/* L'espace entre cartes est porté par le repère (pas de marge sur les cartes) :
+   le bas du repère = haut de la carte suivante, et toutes les cartes se
+   décollent ensemble à la fin. */
+.card-mark {
+  height: clamp(2rem, 8vh, 5rem);
+}
+
+.card-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  height: min(calc(100vh - var(--header-h) - 4rem), 40rem);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--acier) 18%, transparent);
+  background: var(--carbone);
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+.card-media {
+  position: relative;
+  min-height: 0;
+}
+.card-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(1.75rem, 3.5vw, 3.5rem);
+}
+
+.card-title {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.card-specs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--acier);
+}
+.card-specs li + li {
+  margin-top: 0.4rem;
+}
+
+.card-led {
+  max-width: 3rem;
+  margin: 1.75rem 0 1.25rem;
+}
+
+.card-price {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.375rem;
+  color: var(--chrome);
+}
+.card-price-label {
+  margin-right: 0.35em;
+  font-family: var(--font-text);
+  font-style: normal;
+  font-size: 0.8125rem;
+  color: var(--acier);
+}
+
+/* Voile : assombrit la carte recouverte (opacité seulement) */
+.card-shade {
+  position: absolute;
+  inset: 0;
+  background: var(--nuit);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Mobile : empilement normal, rien de collé ── */
+@media (max-width: 767.98px) {
+  .range-cards::after {
+    display: none;
+  }
+  .card {
+    position: static;
+  }
+  .card-inner {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    will-change: auto;
+  }
+  .card-media {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Mouvement réduit : pas d'empilement */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    position: static;
+  }
+  .card-inner {
+    will-change: auto;
+  }
+}
