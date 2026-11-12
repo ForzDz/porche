@@ -2,14 +2,17 @@ import { useLayoutEffect, useRef } from 'react'
 import { gsap, ScrollTrigger } from '../lib/scroll.js'
 import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
-import { DRIVER, INTRO, STATS, STATS_NOTE } from '../content.js'
+import { BlurLetters, BlurLine } from './BlurText.jsx'
+import { DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
 import './Hero.css'
 
 /*
- * Timeline normalisée 0 → 1 = toute la course du pin.
+ * Timeline scrubée normalisée 0 → 1 = toute la course du pin.
  *   0.00-0.10  showroom : intro-dark → intro-lit
  *   0.10-1.00  média (vidéo ou séquence) scrubé
- * Les fenêtres de texte suivent la carte de CLAUDE.md.
+ * Le texte n'est PAS scrubé : la progression scrubée ouvre/ferme des
+ * fenêtres (carte de CLAUDE.md) et chaque bloc joue une courte timeline
+ * temporelle — rapide et nette même si le scroll s'arrête au milieu.
  */
 const INTRO_END = 0.1
 const PIN_LENGTH = 5 // en hauteurs d'écran
@@ -39,6 +42,19 @@ function scrollToMedia(p) {
   return 1
 }
 
+/*
+ * Fenêtres de texte (progression scrubée).
+ * Driver : la portière s'ouvre de 65 à ~75 % ; le texte attend que la caméra
+ * soit dans l'habitacle pour ne jamais se poser sur la carrosserie.
+ */
+const PHASES = [
+  { sel: '.blk-intro', from: 0.12, to: 0.31 },
+  { sel: '.blk-stats', from: 0.37, to: 0.6, counters: true },
+  { sel: '.blk-driver', from: 0.76, to: Infinity },
+]
+
+const MQ_FINE_POINTER = '(hover: hover) and (pointer: fine)'
+
 export default function Hero({ onDiscover }) {
   const isMobile = useMediaQuery(MQ_MOBILE)
   const stageRef = useRef(null)
@@ -52,18 +68,117 @@ export default function Hero({ onDiscover }) {
     const driver = isMobile
       ? createFrameDriver(canvasRef.current, { onFirstFrame: hidePoster })
       : createVideoDriver(videoRef.current, { onReady: hidePoster })
+    let removePointer = () => {}
 
-    const ctx = gsap.context(() => {
+    const ctx = gsap.context((self) => {
       const q = gsap.utils.selector(stage)
       const progress = { v: 0 }
 
-      // États de départ (évite le flash avant le premier rendu du scrub)
       gsap.set(q('.hero-lit, .hero-media'), { opacity: 0 })
       gsap.set(q('.blk, .scrim'), { autoAlpha: 0 })
-      gsap.set(q('.led'), { scaleX: 0 })
 
+      /* ── Entrée / sortie des blocs de texte (temporelles) ── */
+      const running = new Map()
+      let countersDone = false
+
+      self.add('enter', (phase) => {
+        const blk = q(phase.sel)[0]
+        running.get(blk)?.kill()
+        const sharp = blk.querySelectorAll('.bt-sharp')
+        const blur = blk.querySelectorAll('.bt-blur')
+        const units = blk.querySelectorAll('.bt-ch, .bt-line')
+        const rest = blk.querySelectorAll('.rise')
+        const leds = blk.querySelectorAll('.led')
+        const halo = blk.querySelectorAll('.driver-halo')
+        const each = 0.032 // décalage entre deux lettres
+        const counting = phase.counters && !countersDone
+        // Pendant le comptage, le chiffre qui défile EST la révélation : pas de copie floue.
+        const blurIn = counting ? [...blur].filter((b) => !b.closest('.stat-value')) : blur
+        const layers = [...units, ...sharp, ...blurIn]
+
+        const tl = gsap
+          .timeline({
+            defaults: { overwrite: 'auto' },
+            // calques compositeur seulement le temps de l'animation : le flou
+            // est rastérisé une fois, puis opacité/transform restent sur le GPU
+            onComplete: () => gsap.set(layers, { willChange: 'auto' }),
+          })
+          .set(layers, { willChange: 'transform, opacity' })
+          .set(blk, { autoAlpha: 1 })
+          .set(sharp, { opacity: 0 })
+          .set(blur, { opacity: 0 })
+          // la lettre arrive floue, légèrement basse et grande…
+          .fromTo(units, { y: '0.22em', scale: 1.06 }, { y: 0, scale: 1, duration: 0.8, stagger: each, ease: 'expo.out' }, 0)
+          .to(blurIn, { opacity: 1, duration: 0.2, stagger: each, ease: 'power1.out' }, 0)
+          // …puis se met au point : la copie nette remplace la floue
+          .to(sharp, { opacity: 1, duration: 0.38, stagger: each, ease: 'power2.out' }, 0.2)
+          .to(blurIn, { opacity: 0, duration: 0.42, stagger: each, ease: 'power1.in' }, 0.26)
+          .fromTo(rest, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, 0.25)
+          .fromTo(leds, { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: 'power3.inOut' }, 0.3)
+
+        if (halo.length) tl.fromTo(halo, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: 'power2.out' }, 0)
+
+        if (counting) {
+          countersDone = true
+          blk.querySelectorAll('.stat-value .bt-line').forEach((line, i) => {
+            const { to, decimals } = STATS[i]
+            // seule la copie nette défile ; la floue garde la valeur finale (pour la sortie)
+            const num = line.querySelector('.bt-sharp')
+            const n = { v: 0 }
+            const write = () => (num.textContent = formatStat(n.v, decimals))
+            write()
+            tl.to(n, { v: to, duration: 1.5, ease: 'power3.out', onUpdate: write }, 0.05 + i * 0.12)
+          })
+        }
+        running.set(blk, tl)
+      })
+
+      self.add('leave', (phase) => {
+        const blk = q(phase.sel)[0]
+        running.get(blk)?.kill()
+        const sharp = blk.querySelectorAll('.bt-sharp')
+        const blur = blk.querySelectorAll('.bt-blur')
+        const rest = blk.querySelectorAll('.rise')
+        const leds = blk.querySelectorAll('.led')
+        const halo = blk.querySelectorAll('.driver-halo')
+        const each = 0.012
+        const layers = [...sharp, ...blur]
+
+        const tl = gsap
+          .timeline({
+            defaults: { overwrite: 'auto' },
+            onComplete: () => gsap.set(layers, { willChange: 'auto' }),
+          })
+          .set(layers, { willChange: 'opacity' })
+          // la copie nette s'efface pendant que la floue passe brièvement : flou doux
+          .to(sharp, { opacity: 0, duration: 0.3, stagger: each, ease: 'power1.in' }, 0)
+          .to(blur, { keyframes: { opacity: [0, 0.65, 0] }, duration: 0.5, stagger: each, ease: 'none' }, 0)
+          .to(rest, { opacity: 0, y: -10, duration: 0.35, stagger: 0.03, ease: 'power1.in' }, 0)
+          .to(leds, { scaleX: 0, duration: 0.35, ease: 'power2.in' }, 0)
+          .to(halo, { opacity: 0, duration: 0.4 }, 0)
+          .set(blk, { autoAlpha: 0 })
+        running.set(blk, tl)
+      })
+
+      const active = new Set()
+      const syncPhases = (p) => {
+        for (const phase of PHASES) {
+          const on = p >= phase.from && p < phase.to
+          if (on === active.has(phase)) continue
+          if (on) {
+            active.add(phase)
+            self.enter(phase)
+          } else {
+            active.delete(phase)
+            self.leave(phase)
+          }
+        }
+      }
+
+      /* ── Timeline scrubée : lumière, média, scrims (inchangée) ── */
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
+        onUpdate: () => syncPhases(tl.time()),
         scrollTrigger: {
           id: 'hero',
           trigger: stage,
@@ -75,12 +190,9 @@ export default function Hero({ onDiscover }) {
         },
       })
 
-      // 0-10 % : les lumières du showroom s'allument
       tl.to(q('.hero-lit'), { opacity: 1, duration: INTRO_END }, 0)
         .to(q('.hero-cue'), { opacity: 0, y: 12, duration: 0.05 }, 0.03)
-        // relais image allumée → média (même cadrage que la frame 1)
         .to(q('.hero-media'), { opacity: 1, duration: 0.03 }, INTRO_END - 0.005)
-        // 10-100 % : le scroll pilote le média
         .fromTo(
           progress,
           { v: INTRO_END },
@@ -91,53 +203,37 @@ export default function Hero({ onDiscover }) {
           },
           INTRO_END,
         )
+        .to(q('.scrim-left'), { autoAlpha: 1, duration: 0.04 }, 0.11)
+        .to(q('.scrim-left'), { autoAlpha: 0, duration: 0.04 }, 0.32)
+        .to(q('.scrim-top'), { autoAlpha: 1, duration: 0.04 }, 0.36)
+        .to(q('.scrim-top'), { autoAlpha: 0, duration: 0.04 }, 0.61)
+        .to(q('.scrim-bottom'), { autoAlpha: 1, duration: 0.05 }, 0.73)
 
-      const reveal = (sel, at) => {
-        tl.fromTo(
-          q(`${sel}`),
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.03 },
-          at,
-        )
-          .fromTo(
-            q(`${sel} .rise`),
-            { y: 28, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.05, stagger: 0.012, ease: 'power2.out' },
-            at,
-          )
-          .to(q(`${sel} .led`), { scaleX: 1, duration: 0.06, stagger: 0.012, ease: 'power2.inOut' }, at + 0.02)
+      /* ── Parallaxe curseur : calque texte uniquement, jamais le média ── */
+      if (window.matchMedia(MQ_FINE_POINTER).matches) {
+        const layers = q('[data-depth]').map((el) => ({
+          depth: parseFloat(el.dataset.depth),
+          x: gsap.quickTo(el, 'x', { duration: 0.9, ease: 'power3.out' }),
+          y: gsap.quickTo(el, 'y', { duration: 0.9, ease: 'power3.out' }),
+        }))
+        const onMove = (e) => {
+          const nx = e.clientX / window.innerWidth - 0.5
+          const ny = e.clientY / window.innerHeight - 0.5
+          for (const l of layers) {
+            l.x(nx * -14 * l.depth)
+            l.y(ny * -8 * l.depth)
+          }
+        }
+        window.addEventListener('pointermove', onMove, { passive: true })
+        removePointer = () => window.removeEventListener('pointermove', onMove)
       }
-      const leave = (sel, at) => {
-        tl.to(q(`${sel} .rise`), { y: -20, opacity: 0, duration: 0.035, stagger: 0.006, ease: 'power1.in' }, at).to(
-          q(sel),
-          { autoAlpha: 0, duration: 0.01 },
-          at + 0.035,
-        )
-      }
-
-      // 10-35 % — GAUCHE : Born at Night
-      reveal('.blk-intro', 0.12)
-      tl.to(q('.scrim-left'), { autoAlpha: 1, duration: 0.04 }, 0.11)
-      leave('.blk-intro', 0.31)
-      tl.to(q('.scrim-left'), { autoAlpha: 0, duration: 0.04 }, 0.32)
-
-      // 35-65 % — HAUT GAUCHE : chiffres
-      tl.to(q('.scrim-top'), { autoAlpha: 1, duration: 0.04 }, 0.36)
-      reveal('.blk-stats', 0.37)
-      leave('.blk-stats', 0.6)
-      tl.to(q('.scrim-top'), { autoAlpha: 0, duration: 0.04 }, 0.61)
-
-      // 65-100 % — CENTRE BAS : Built Around the Driver (reste affiché).
-      // La portière s'ouvre de 65 à ~75 % : le texte attend que la caméra
-      // soit dans l'habitacle pour ne jamais se poser sur la carrosserie.
-      tl.to(q('.scrim-bottom'), { autoAlpha: 1, duration: 0.05 }, 0.73)
-      reveal('.blk-driver', 0.76)
     }, stage)
 
     // Les webfonts changent la hauteur des blocs : on recalcule une fois chargées
     document.fonts?.ready.then(() => ScrollTrigger.refresh())
 
     return () => {
+      removePointer()
       ctx.revert()
       driver.destroy()
     }
@@ -173,25 +269,27 @@ export default function Hero({ onDiscover }) {
           <div className="scrim scrim-bottom" />
         </div>
 
-        {/* Texte : toujours sur les zones sombres */}
+        {/* Texte : toujours sur les zones sombres. data-depth = parallaxe curseur */}
         <div className="hero-copy">
-          <div className="blk blk-intro" id="design">
+          <div className="blk blk-intro" id="design" data-depth="1">
             <h1 className="t-display">
-              <span className="rise">{INTRO.title}</span>
+              <BlurLetters text={INTRO.title} />
               <span className="led" />
             </h1>
-            <p className="t-sub rise">{INTRO.sub}</p>
+            <p className="t-sub">
+              <BlurLine text={INTRO.sub} />
+            </p>
           </div>
 
-          <div className="blk blk-stats" id="performance">
+          <div className="blk blk-stats" id="performance" data-depth="0.8">
             <h2 className="sr-only">Performances</h2>
             <dl className="stats">
               {STATS.map((s) => (
-                <div className="stat rise" key={s.label}>
-                  <dt className="stat-label">{s.label}</dt>
+                <div className="stat" key={s.label}>
+                  <dt className="stat-label rise">{s.label}</dt>
                   <dd className="stat-value">
-                    {s.value}
-                    <span className="stat-unit">{s.unit}</span>
+                    <BlurLine text={s.value} className="stat-num" />
+                    <span className="stat-unit rise">{s.unit}</span>
                     <span className="led" />
                   </dd>
                 </div>
@@ -200,9 +298,10 @@ export default function Hero({ onDiscover }) {
             <p className="stats-note rise">{STATS_NOTE}</p>
           </div>
 
-          <div className="blk blk-driver" id="habitacle">
+          <div className="blk blk-driver" id="habitacle" data-depth="0.7">
+            <span className="driver-halo" aria-hidden="true" />
             <h2 className="t-display t-center">
-              <span className="rise">{DRIVER.title}</span>
+              <BlurLetters text={DRIVER.title} />
               <span className="led led-center" />
             </h2>
             <button type="button" className="btn-outline rise" onClick={onDiscover}>

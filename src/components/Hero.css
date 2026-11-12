@@ -87,6 +87,71 @@
   display: inline-block;
 }
 
+/* ── Flou → net : deux copies, seule l'opacité est animée ── */
+.bt-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.bt-ch,
+.bt-line {
+  position: relative;
+  display: inline-block;
+  transform-origin: 50% 80%;
+}
+.bt-line {
+  white-space: nowrap;
+}
+.bt-ghost {
+  visibility: hidden;
+}
+.bt-line .bt-sharp,
+.bt-blur {
+  position: absolute;
+  inset: 0;
+}
+/*
+ * Copie floue = texte transparent + text-shadow flou.
+ * Pas de `filter: blur` : sur un calque compositeur, un filtre est
+ * recalculé à chaque image (mesuré : FPS ÷ 2 en CPU ×4). L'ombre, elle,
+ * est cuite dans la rastérisation du calque, une seule fois.
+ */
+.bt-blur {
+  --bt-color: var(--chrome);
+  opacity: 0;
+  color: transparent;
+  text-shadow: 0 0 max(5px, 0.16em) var(--bt-color);
+  pointer-events: none;
+}
+.t-sub .bt-blur,
+.stat-unit .bt-blur {
+  --bt-color: var(--acier);
+}
+.stat-num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Halo radial sombre derrière « Built Around the Driver » */
+.blk-driver {
+  isolation: isolate;
+}
+.driver-halo {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 55%;
+  width: min(120vw, 64rem);
+  height: 190%;
+  translate: -50% -50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--nuit) 80%, transparent) 0%,
+    color-mix(in srgb, var(--nuit) 55%, transparent) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
 .t-display {
   margin: 0;
   font-family: var(--font-display);

@@ -4,11 +4,13 @@ export const INTRO = {
   sub: 'La 911 GT3, réimaginée.',
 }
 
+// `to` + `decimals` : valeurs des compteurs (format français, virgule décimale)
 export const STATS = [
-  { value: '510', unit: 'ch', label: 'Puissance' },
-  { value: '318', unit: 'km/h', label: 'Vitesse max.' },
-  { value: '3,4', unit: 's', label: '0-100 km/h' },
+  { value: '510', to: 510, decimals: 0, unit: 'ch', label: 'Puissance' },
+  { value: '318', to: 318, decimals: 0, unit: 'km/h', label: 'Vitesse max.' },
+  { value: '3,4', to: 3.4, decimals: 1, unit: 's', label: '0-100 km/h' },
 ]
+export const formatStat = (v, decimals) => v.toFixed(decimals).replace('.', ',')
 export const STATS_NOTE = 'Chiffres concept'
 
 export const DRIVER = {
