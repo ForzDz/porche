@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import StaticHero from './components/StaticHero.jsx'
+import Marquee from './components/Marquee.jsx'
+import Lines from './components/Lines.jsx'
 import Range from './components/Range.jsx'
 import { MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { scrollToY, startLenis, stopLenis } from './lib/scroll.js'
@@ -27,6 +29,8 @@ export default function App() {
       <Header />
       <main id="top">
         {reduced ? <StaticHero onDiscover={discover} /> : <Hero onDiscover={discover} />}
+        <Marquee />
+        <Lines />
         <Range />
       </main>
       <footer className="site-footer" id="concept">

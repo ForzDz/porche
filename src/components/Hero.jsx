@@ -190,6 +190,29 @@ export default function Hero({ onDiscover }) {
         },
       })
 
+      /*
+       * Sortie : démarre exactement là où le pin s'arrête (dernière image).
+       * Trigger séparé, créé APRÈS le pin dans le même contexte (ordre de
+       * refresh garanti). Il ne touche jamais `tl` ni le driver : le scrub
+       * vidéo reste figé sur la dernière image et repart intact en remontant.
+       * Les calques descendent à mi-vitesse → la section suivante monte par-dessus.
+       */
+      gsap
+        .timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            id: 'hero-exit',
+            trigger: stage.parentElement,
+            start: 'bottom bottom',
+            end: 'bottom 40%', // noir complet après 60 % d'écran, même si la page est courte
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+        .to(q('.hero-veil'), { opacity: 1, duration: 1 }, 0)
+        // mi-vitesse sur la course de la sortie (0,6 écran → 0,3 écran de décalage)
+        .to(q('.hero-layers, .hero-copy'), { y: () => window.innerHeight * 0.3, duration: 1 }, 0)
+
       tl.to(q('.hero-lit'), { opacity: 1, duration: INTRO_END }, 0)
         .to(q('.hero-cue'), { opacity: 0, y: 12, duration: 0.05 }, 0.03)
         .to(q('.hero-media'), { opacity: 1, duration: 0.03 }, INTRO_END - 0.005)
@@ -321,6 +344,9 @@ export default function Hero({ onDiscover }) {
             </div>
           </div>
         </div>
+
+        {/* Sortie : noir par-dessus vidéo + texte (opacité seulement) */}
+        <div className="hero-veil" aria-hidden="true" />
       </div>
     </section>
   )

@@ -25,6 +25,23 @@ export const NAV = [
   { label: 'Habitacle', p: 0.86, id: 'habitacle' },
 ]
 
+// Bandeau défilant (après le hero)
+export const MARQUEE = '911 GT3 · CONCEPT · BORN AT NIGHT · '
+
+// Section design (après le bandeau). Ton concept : intentions, aucune donnée réelle.
+export const LINES = {
+  title: 'Every Line Has a Purpose',
+  body: [
+    "Dans ce concept, aucun trait n'est là pour décorer. L'aileron, la chute du pavillon, les ouïes derrière la portière : chaque ligne a été imaginée pour guider l'air avant de guider le regard.",
+    "C'est une étude de style, pas une fiche technique. Une GT3 rêvée pour la nuit : carrosserie noire, détails rouges, lumière rasante. Ce que vous voyez relève de l'intention, pas de l'homologation.",
+  ],
+  stills: [
+    { src: '/stills/still-aero.webp', w: 1600, h: 900, caption: 'Aerodynamics', alt: 'Profil du concept noir, aileron arrière déployé' },
+    { src: '/stills/still-wheel.webp', w: 720, h: 900, caption: 'Wheels', alt: 'Jante noire à branches fines et étrier de frein rouge' },
+    { src: '/stills/still-light.webp', w: 720, h: 900, caption: 'Light', alt: 'Feu arrière rouge sous l’aileron, dans la pénombre' },
+  ],
+}
+
 // Gamme : versions fictives du concept. Jamais de prix réel.
 export const RANGE = {
   title: 'The Range',
