@@ -69,3 +69,22 @@ export const RANGE = {
     },
   ],
 }
+
+// Contact : formulaire de démo, n'envoie rien.
+export const CONTACT = {
+  title: 'Get in Touch',
+  intro: 'Formulaire de démonstration : rien n’est envoyé, rien n’est enregistré.',
+  fields: { name: 'Name', email: 'Email', model: 'Model of interest', message: 'Message' },
+  submit: 'Send',
+  sent: 'Concept site, no message sent.',
+}
+
+// Pied de page : liens vers les sections (p = progression dans le hero si besoin)
+export const FOOTER_LINKS = [
+  { label: 'Design', id: 'design', p: 0.24 },
+  { label: 'Performance', id: 'performance', p: 0.5 },
+  { label: 'Range', id: 'gamme' },
+  { label: 'Gallery', id: 'lignes' },
+  { label: 'Contact', id: 'contact' },
+]
+export const LEGAL = 'Projet concept non officiel, sans lien avec Porsche AG.'

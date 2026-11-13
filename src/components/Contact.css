@@ -1,0 +1,193 @@
+/* ── Get in Touch : formulaire de démo ───────────────────── */
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2.5rem, 6vw, 7rem);
+  padding: clamp(5rem, 14vh, 9rem) var(--gutter);
+  background: var(--nuit);
+}
+
+.contact-title {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 5.4vw, 5.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.contact-intro {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--acier);
+  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  line-height: 1.7;
+}
+
+.contact-form {
+  display: grid;
+  gap: clamp(1.75rem, 4vh, 2.5rem);
+  min-width: 0;
+}
+.contact-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+/* Champ : seulement une ligne du bas. Le label monte au focus / si rempli. */
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.25rem;
+  min-width: 0;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--chrome);
+  font: 300 1rem/1.5 var(--font-text); /* 16px : pas de zoom auto sur iOS */
+  appearance: none;
+  outline: none;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+.field select {
+  padding-right: 1.5rem;
+  cursor: pointer;
+}
+.field select option {
+  background: var(--carbone);
+  color: var(--chrome);
+}
+/* chevron du select : deux traits en CSS, aucune image */
+.field:has(select)::after {
+  content: '';
+  position: absolute;
+  right: 0.25rem;
+  bottom: 1.15rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1px solid var(--acier);
+  border-bottom: 1px solid var(--acier);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.field-label {
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--acier);
+  transform-origin: left top;
+  pointer-events: none;
+  transition:
+    transform 0.4s var(--ease-out),
+    color 0.3s;
+}
+.field input:focus ~ .field-label,
+.field input:not(:placeholder-shown) ~ .field-label,
+.field textarea:focus ~ .field-label,
+.field textarea:not(:placeholder-shown) ~ .field-label,
+.field select:focus ~ .field-label,
+.field select:valid ~ .field-label {
+  transform: translateY(-1.35rem) scale(0.72);
+  letter-spacing: 0.04em;
+}
+.field:focus-within .field-label {
+  color: var(--chrome);
+}
+
+/* Ligne : base acier 1px ; au focus, le rouge grandit depuis la gauche et s'épaissit */
+.field-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  pointer-events: none;
+}
+.field-line::before,
+.field-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform-origin: left bottom;
+}
+.field-line::before {
+  background: color-mix(in srgb, var(--acier) 45%, transparent);
+  transform: scaleY(0.5);
+}
+.field-line::after {
+  background: var(--rouge);
+  transform: scale(0, 0.5);
+  transition: transform 0.55s var(--ease-out);
+}
+.field:focus-within .field-line::after {
+  transform: scale(1, 1);
+}
+/* le focus est déjà visible par la ligne rouge */
+.field :focus-visible {
+  outline: none;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+  padding-top: 0.5rem;
+}
+.contact-status {
+  margin: 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--chrome);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.4s,
+    transform 0.4s var(--ease-out);
+}
+.contact-status.is-on {
+  opacity: 1;
+  transform: none;
+}
+.contact-status.is-on::before {
+  content: '';
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: var(--rouge);
+  vertical-align: 0.1em;
+}
+
+@media (max-width: 767.98px) {
+  .contact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contact-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field-label,
+  .field-line::after,
+  .contact-status {
+    transition-duration: 0.01s;
+  }
+}

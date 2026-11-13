@@ -5,6 +5,7 @@ import StaticHero from './components/StaticHero.jsx'
 import Marquee from './components/Marquee.jsx'
 import Lines from './components/Lines.jsx'
 import Range from './components/Range.jsx'
+import Contact from './components/Contact.jsx'
 import { MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { scrollToY, startLenis, stopLenis } from './lib/scroll.js'
 import './App.css'
@@ -32,6 +33,7 @@ export default function App() {
         <Marquee />
         <Lines />
         <Range />
+        <Contact />
       </main>
       <footer className="site-footer" id="concept">
         <p className="footer-title">
