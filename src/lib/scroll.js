@@ -13,6 +13,7 @@ export function startLenis() {
   if (lenis) return lenis
   lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
   lenis.on('scroll', ScrollTrigger.update)
+  if (locked) lenis.stop()
   gsap.ticker.add(raf)
   gsap.ticker.lagSmoothing(0)
   return lenis
@@ -55,4 +56,13 @@ export function scrollToSection({ id, p }) {
   if (p != null) return scrollToHeroProgress(p, id)
   const el = document.getElementById(id)
   if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY)
+}
+
+/** Verrou pendant l'écran de chargement (appliqué aussi si Lenis démarre après). */
+let locked = false
+export function setScrollLock(on) {
+  locked = on
+  document.documentElement.classList.toggle('is-locked', on)
+  if (on) lenis?.stop()
+  else lenis?.start()
 }

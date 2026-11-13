@@ -96,3 +96,14 @@
     letter-spacing: 0.14em;
   }
 }
+
+/* Se cache en descendant, revient en remontant ou au focus clavier */
+.site-header {
+  transition: transform 0.5s var(--ease-out);
+}
+.site-header.is-hidden {
+  transform: translateY(calc(-100% - 2.5rem)); /* + voile ::before */
+}
+.site-header.is-hidden:focus-within {
+  transform: none;
+}

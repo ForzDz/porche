@@ -1,0 +1,58 @@
+/* ── Écran de chargement ─────────────────────────────────── */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.1rem;
+  background: var(--nuit);
+  transition: opacity 0.6s var(--ease-out) 0.25s;
+}
+.loader.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-mark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  letter-spacing: 0.04em;
+  color: var(--chrome);
+}
+.loader-mark em {
+  color: var(--acier);
+}
+
+/* LED : avance par paliers tant que ça charge, se complète à la fin */
+.loader-line {
+  position: relative;
+  width: 7.5rem;
+  height: 1px;
+  overflow: hidden;
+  background: var(--carbone);
+}
+.loader-bar {
+  position: absolute;
+  inset: 0;
+  background: var(--rouge);
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: loader-fill 4s var(--ease-out) forwards;
+}
+.loader.is-leaving .loader-bar {
+  animation: none;
+  transform: scaleX(1);
+  transition: transform 0.3s var(--ease-out);
+}
+@keyframes loader-fill {
+  to {
+    transform: scaleX(0.85);
+  }
+}
+
+html.is-locked {
+  overflow: hidden;
+}

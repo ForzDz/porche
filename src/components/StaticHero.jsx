@@ -1,4 +1,6 @@
 import { DRIVER, INTRO, STATS, STATS_NOTE } from '../content.js'
+import { useEffect } from 'react'
+import { markHeroReady } from '../lib/ready.js'
 import './Hero.css'
 
 /*
@@ -7,6 +9,9 @@ import './Hero.css'
  * restent lisibles sous forme de panneaux fixes.
  */
 export default function StaticHero({ onDiscover }) {
+  // images statiques : rien à attendre
+  useEffect(markHeroReady, [])
+
   return (
     <section className="hero hero--static" aria-label="911 GT3 Concept">
       <div className="panel" id="design">

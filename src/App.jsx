@@ -7,11 +7,14 @@ import Lines from './components/Lines.jsx'
 import Range from './components/Range.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
+import Loader from './components/Loader.jsx'
+import { useMagnetic } from './lib/magnetic.js'
 import { MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { scrollToY, startLenis, stopLenis } from './lib/scroll.js'
 
 export default function App() {
   const reduced = useMediaQuery(MQ_REDUCED)
+  useMagnetic()
 
   // Lenis uniquement si le mouvement est autorisé
   useEffect(() => {
@@ -27,6 +30,7 @@ export default function App() {
 
   return (
     <>
+      <Loader />
       <Header />
       <main id="top">
         {reduced ? <StaticHero onDiscover={discover} /> : <Hero onDiscover={discover} />}

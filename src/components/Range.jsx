@@ -1,5 +1,5 @@
 import { Fragment, useLayoutEffect, useRef } from 'react'
-import { gsap, scrollToY } from '../lib/scroll.js'
+import { gsap, scrollToSection } from '../lib/scroll.js'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { RANGE } from '../content.js'
 import './Range.css'
@@ -48,11 +48,7 @@ export default function Range() {
     return () => ctx.revert()
   }, [isMobile, reduced])
 
-  // Section contact pas encore créée : repli sur le pied de page
-  const toContact = () => {
-    const el = document.getElementById('contact') ?? document.getElementById('concept')
-    if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY)
-  }
+  const toContact = () => scrollToSection({ id: 'contact' })
 
   return (
     <section className="range" id="gamme" ref={rootRef} aria-labelledby="range-title">
@@ -88,7 +84,7 @@ export default function Range() {
                     <p className="card-price">
                       <span className="card-price-label">Prix</span> {RANGE.price}
                     </p>
-                    <button type="button" className="btn-outline" onClick={toContact}>
+                    <button type="button" className="btn-outline" onClick={toContact} data-magnetic>
                       {RANGE.cta}
                     </button>
                   </div>

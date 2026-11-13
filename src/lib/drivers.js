@@ -5,7 +5,7 @@
  */
 
 /* ── Desktop : la vidéo, currentTime suit le scroll ─────────────────── */
-export function createVideoDriver(video, { onReady } = {}) {
+export function createVideoDriver(video, { onReady, onMeta: onMetaCb } = {}) {
   let duration = 0
   let target = 0
   let ready = false
@@ -23,6 +23,7 @@ export function createVideoDriver(video, { onReady } = {}) {
     // on s'arrête juste avant la fin pour garder la dernière image affichée
     duration = Math.max(0, video.duration - 0.05)
     ready = true
+    onMetaCb?.()
     seek()
   }
   const onData = () => onReady?.()

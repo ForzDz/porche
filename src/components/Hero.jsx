@@ -4,6 +4,7 @@ import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import { BlurLetters, BlurLine } from './BlurText.jsx'
 import { DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
+import { markHeroReady } from '../lib/ready.js'
 import './Hero.css'
 
 /*
@@ -66,8 +67,8 @@ export default function Hero({ onDiscover }) {
     const stage = stageRef.current
     const hidePoster = () => posterRef.current?.classList.add('is-hidden')
     const driver = isMobile
-      ? createFrameDriver(canvasRef.current, { onFirstFrame: hidePoster })
-      : createVideoDriver(videoRef.current, { onReady: hidePoster })
+      ? createFrameDriver(canvasRef.current, { onFirstFrame: () => (hidePoster(), markHeroReady()) })
+      : createVideoDriver(videoRef.current, { onReady: hidePoster, onMeta: markHeroReady })
     let removePointer = () => {}
 
     const ctx = gsap.context((self) => {
@@ -327,12 +328,15 @@ export default function Hero({ onDiscover }) {
               <BlurLetters text={DRIVER.title} />
               <span className="led led-center" />
             </h2>
-            <button type="button" className="btn-outline rise" onClick={onDiscover}>
-              {DRIVER.cta}
-              <span className="btn-arrow" aria-hidden="true">
-                ↓
-              </span>
-            </button>
+            {/* .rise anime y sur l'enveloppe : le bouton garde x/y pour l'effet magnétique */}
+            <span className="rise">
+              <button type="button" className="btn-outline" onClick={onDiscover} data-magnetic>
+                {DRIVER.cta}
+                <span className="btn-arrow" aria-hidden="true">
+                  ↓
+                </span>
+              </button>
+            </span>
           </div>
 
           <div className="hero-cue" aria-hidden="true">

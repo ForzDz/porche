@@ -118,3 +118,25 @@ a {
   transform: scaleX(1);
   transform-origin: left center;
 }
+
+/* La barre de défilement ne disparaît pas pendant le verrou du chargement */
+html {
+  scrollbar-gutter: stable;
+}
+
+/*
+ * Mouvement réduit : filet de sécurité global pour les transitions CSS
+ * (survols, labels, header). Les animations GSAP sont coupées section
+ * par section ; ici on garde seulement des changements d'état instantanés.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
