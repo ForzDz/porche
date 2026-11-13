@@ -1,0 +1,3 @@
+# Site concept non officiel — aucun contenu privé
+User-agent: *
+Allow: /

@@ -29,7 +29,7 @@ export default function StaticHero({ onDiscover }) {
       </div>
 
       <div className="panel" id="performance">
-        <img className="hero-img" src="/stills/profile.webp" alt="" loading="lazy" />
+        <img className="hero-img" src="/stills/profile.webp" width="1280" height="720" alt="" loading="lazy" decoding="async" />
         <div className="scrim scrim-top" />
         <div className="hero-copy">
           <div className="blk blk-stats">
@@ -52,7 +52,7 @@ export default function StaticHero({ onDiscover }) {
       </div>
 
       <div className="panel" id="habitacle">
-        <img className="hero-img" src="/stills/cockpit.webp" alt="" loading="lazy" />
+        <img className="hero-img" src="/stills/cockpit.webp" width="1280" height="720" alt="" loading="lazy" decoding="async" />
         <div className="scrim scrim-bottom" />
         <div className="hero-copy">
           <div className="blk blk-driver">

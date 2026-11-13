@@ -1,5 +1,5 @@
 import { Fragment, useLayoutEffect, useRef } from 'react'
-import { gsap, scrollToSection } from '../lib/scroll.js'
+import { gsap, scrollToSection, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { RANGE } from '../content.js'
 import './Range.css'
@@ -39,6 +39,7 @@ export default function Range() {
               end: () => `bottom ${stickyTop()}px`,
               scrub: true,
               invalidateOnRefresh: true,
+              onToggle: willChangeWhileActive([card.querySelector('.card-inner'), card.querySelector('.card-shade')], 'transform, opacity'),
             },
           })
           .to(card.querySelector('.card-inner'), { scale: SCALE_TO }, 0)

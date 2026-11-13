@@ -1,12 +1,12 @@
 /* ── The Range : cartes empilées ───────────────────────── */
 .range {
-  padding: clamp(5rem, 14vh, 9rem) var(--gutter) clamp(2rem, 6vh, 4rem);
+  padding: clamp(4rem, 10vh, 6rem) var(--gutter) clamp(1.5rem, 4vh, 3rem);
   background: var(--nuit);
 }
 
 .range-head {
   max-width: 40rem;
-  margin-bottom: clamp(3rem, 8vh, 5rem);
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
 }
 .range-title {
   margin: 0 0 1.5rem;
@@ -35,7 +35,7 @@
 .range-cards::after {
   content: '';
   display: block;
-  height: clamp(5rem, 18vh, 12rem);
+  height: clamp(3rem, 10vh, 6rem);
 }
 
 /* Desktop : la carte colle sous le header, la suivante la recouvre */
@@ -47,19 +47,18 @@
    le bas du repère = haut de la carte suivante, et toutes les cartes se
    décollent ensemble à la fin. */
 .card-mark {
-  height: clamp(2rem, 8vh, 5rem);
+  height: clamp(1.5rem, 4vh, 3rem);
 }
 
 .card-inner {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  height: min(calc(100vh - var(--header-h) - 4rem), 40rem);
+  height: min(calc(100vh - var(--header-h) - 4rem), 30rem);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--acier) 18%, transparent);
   background: var(--carbone);
   transform-origin: 50% 0;
-  will-change: transform;
 }
 
 .card-media {
@@ -133,20 +132,42 @@
 }
 
 /* ── Mobile : empilement normal, rien de collé ── */
+/*
+ * Mobile : carrousel horizontal (scroll-snap natif, aucun JS).
+ * Les 3 cartes restent accessibles au swipe, mais la section ne coûte
+ * plus qu'une hauteur de carte au scroll vertical (≈ -1 400 px).
+ * Le débordement reste interne à la liste : jamais de scroll horizontal de page.
+ */
 @media (max-width: 767.98px) {
-  .range-cards::after {
+  .range-cards {
+    display: flex;
+    gap: 0.75rem;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .range-cards::-webkit-scrollbar {
+    display: none;
+  }
+  .range-cards::after,
+  .card-mark {
     display: none;
   }
   .card {
     position: static;
+    flex: 0 0 86%;
+    scroll-snap-align: start;
   }
   .card-inner {
     grid-template-columns: minmax(0, 1fr);
-    height: auto;
-    will-change: auto;
+    height: 100%;
   }
   .card-media {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 10;
   }
 }
 
@@ -154,8 +175,5 @@
 @media (prefers-reduced-motion: reduce) {
   .card {
     position: static;
-  }
-  .card-inner {
-    will-change: auto;
   }
 }

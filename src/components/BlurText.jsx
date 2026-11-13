@@ -32,7 +32,9 @@ export function BlurLetters({ text }) {
 }
 
 /**
- * Bloc entier (sous-titre, valeur de compteur).
+ * Bloc entier (sous-titre, valeur de compteur) : SANS flou.
+ * Le flou est réservé aux grands titres (BlurLetters) ; ici la révélation
+ * est seulement opacité + translation.
  * Un « fantôme » invisible réserve la largeur finale : le compteur
  * peut changer de texte sans jamais décaler la mise en page.
  */
@@ -43,9 +45,6 @@ export function BlurLine({ text, className = '' }) {
         {text}
       </span>
       <span className="bt-sharp">{text}</span>
-      <span className="bt-blur" aria-hidden="true">
-        {text}
-      </span>
     </span>
   )
 }

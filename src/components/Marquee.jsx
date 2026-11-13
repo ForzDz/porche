@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap } from '../lib/scroll.js'
+import { gsap, getScrollVelocity } from '../lib/scroll.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { MARQUEE } from '../content.js'
 import './Marquee.css'
@@ -29,37 +29,37 @@ export default function Marquee() {
     let width = group.offsetWidth
     let x = 0
     let boost = 0
-    let lastY = window.scrollY
-    let visible = false
+    let running = false
 
     const ro = new ResizeObserver(() => (width = group.offsetWidth))
     ro.observe(group)
 
+    // Vitesse fournie par Lenis : aucune lecture de window.scrollY (layout forcé)
     const tick = (_t, deltaMs) => {
+      if (!width) return
       const dt = Math.min(deltaMs, 50) / 1000 // pas de saut après un onglet en veille
-      const y = window.scrollY
-      const v = dt ? Math.abs(y - lastY) / dt : 0
-      lastY = y
       // lissage : monte vite, retombe doucement
-      const target = Math.min(v * BOOST, MAX_BOOST)
+      const target = Math.min(getScrollVelocity() * BOOST, MAX_BOOST)
       boost += (target - boost) * (target > boost ? 0.2 : 0.05)
-      if (!visible || !width) return
       x = gsap.utils.wrap(-width, 0, x - (BASE + boost) * dt)
       setX(x)
     }
 
-    // ne tourne que lorsque le bandeau est à l'écran
+    // Hors écran : ticker retiré et calque compositeur libéré
     const io = new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting
-      lastY = window.scrollY
+      if (e.isIntersecting === running) return
+      running = e.isIntersecting
+      track.style.willChange = running ? 'transform' : ''
+      if (running) gsap.ticker.add(tick)
+      else gsap.ticker.remove(tick)
     })
     io.observe(band)
-    gsap.ticker.add(tick)
 
     return () => {
       gsap.ticker.remove(tick)
       io.disconnect()
       ro.disconnect()
+      track.style.willChange = ''
       gsap.set(track, { clearProps: 'transform' })
     }
   }, [reduced])

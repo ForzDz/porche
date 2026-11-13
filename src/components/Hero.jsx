@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, ScrollTrigger } from '../lib/scroll.js'
+import { gsap, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import { BlurLetters, BlurLine } from './BlurText.jsx'
@@ -16,7 +16,7 @@ import './Hero.css'
  * temporelle — rapide et nette même si le scroll s'arrête au milieu.
  */
 const INTRO_END = 0.1
-const PIN_LENGTH = 5 // en hauteurs d'écran
+const PIN_LENGTH = 2.75 // en hauteurs d'écran (5 avant : trop long à parcourir)
 
 /*
  * Progression du scroll (0-1) → position dans le média (0-1), par segments,
@@ -78,87 +78,111 @@ export default function Hero({ onDiscover }) {
       gsap.set(q('.hero-lit, .hero-media'), { opacity: 0 })
       gsap.set(q('.blk, .scrim'), { autoAlpha: 0 })
 
-      /* ── Entrée / sortie des blocs de texte (temporelles) ── */
+      /*
+       * ── Entrée / sortie des blocs de texte (temporelles) ──
+       * Chaque timeline est construite UNE fois (au premier passage) puis
+       * rejouée : créer des tweens en plein scroll coûtait ~150 ms par
+       * phase en CPU ×4 (getComputedStyle sur chaque lettre).
+       * Valeurs de départ explicites (fromTo) → rejouable à l'identique.
+       * Pas d'overwrite : il amputerait définitivement la timeline en cache.
+       * will-change : classe .is-anim posée seulement pendant l'animation.
+       */
+      const cache = new Map()
       const running = new Map()
       let countersDone = false
+      const animOn = (blk) => () => blk.classList.add('is-anim')
+      const animOff = (blk) => () => blk.classList.remove('is-anim')
 
-      self.add('enter', (phase) => {
-        const blk = q(phase.sel)[0]
-        running.get(blk)?.kill()
+      const buildEnter = (blk, counting) => {
         const sharp = blk.querySelectorAll('.bt-sharp')
-        const blur = blk.querySelectorAll('.bt-blur')
+        const blur = blk.querySelectorAll('.bt-blur') // seulement les grands titres
         const units = blk.querySelectorAll('.bt-ch, .bt-line')
         const rest = blk.querySelectorAll('.rise')
         const leds = blk.querySelectorAll('.led')
         const halo = blk.querySelectorAll('.driver-halo')
         const each = 0.032 // décalage entre deux lettres
-        const counting = phase.counters && !countersDone
-        // Pendant le comptage, le chiffre qui défile EST la révélation : pas de copie floue.
-        const blurIn = counting ? [...blur].filter((b) => !b.closest('.stat-value')) : blur
-        const layers = [...units, ...sharp, ...blurIn]
-
+        const nums = blk.querySelectorAll('.stat-value .bt-sharp')
         const tl = gsap
           .timeline({
-            defaults: { overwrite: 'auto' },
-            // calques compositeur seulement le temps de l'animation : le flou
-            // est rastérisé une fois, puis opacité/transform restent sur le GPU
-            onComplete: () => gsap.set(layers, { willChange: 'auto' }),
+            paused: true,
+            defaults: { immediateRender: false },
+            onStart: animOn(blk),
+            onComplete: animOff(blk),
+            onReverseComplete: animOff(blk),
           })
-          .set(layers, { willChange: 'transform, opacity' })
-          .set(blk, { autoAlpha: 1 })
-          .set(sharp, { opacity: 0 })
-          .set(blur, { opacity: 0 })
-          // la lettre arrive floue, légèrement basse et grande…
+          .set(blk, { autoAlpha: 1 }, 0)
+        // hors comptage, les chiffres affichent leur valeur finale (même après un rembobinage)
+        if (!counting && nums.length) tl.call(() => nums.forEach((num, i) => (num.textContent = STATS[i].value)), null, 0)
+        tl
+          // la lettre arrive (floue si grand titre), légèrement basse et grande…
           .fromTo(units, { y: '0.22em', scale: 1.06 }, { y: 0, scale: 1, duration: 0.8, stagger: each, ease: 'expo.out' }, 0)
-          .to(blurIn, { opacity: 1, duration: 0.2, stagger: each, ease: 'power1.out' }, 0)
+          .fromTo(blur, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: each, ease: 'power1.out' }, 0)
           // …puis se met au point : la copie nette remplace la floue
-          .to(sharp, { opacity: 1, duration: 0.38, stagger: each, ease: 'power2.out' }, 0.2)
-          .to(blurIn, { opacity: 0, duration: 0.42, stagger: each, ease: 'power1.in' }, 0.26)
+          .fromTo(sharp, { opacity: 0 }, { opacity: 1, duration: 0.38, stagger: each, ease: 'power2.out' }, blur.length ? 0.2 : 0)
+          .fromTo(blur, { opacity: 1 }, { opacity: 0, duration: 0.42, stagger: each, ease: 'power1.in' }, 0.26)
           .fromTo(rest, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, 0.25)
           .fromTo(leds, { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: 'power3.inOut' }, 0.3)
-
         if (halo.length) tl.fromTo(halo, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: 'power2.out' }, 0)
-
         if (counting) {
-          countersDone = true
+          tl.call(() => nums.forEach((num, i) => (num.textContent = formatStat(0, STATS[i].decimals))), null, 0)
           blk.querySelectorAll('.stat-value .bt-line').forEach((line, i) => {
             const { to, decimals } = STATS[i]
-            // seule la copie nette défile ; la floue garde la valeur finale (pour la sortie)
             const num = line.querySelector('.bt-sharp')
             const n = { v: 0 }
             const write = () => (num.textContent = formatStat(n.v, decimals))
-            write()
-            tl.to(n, { v: to, duration: 1.5, ease: 'power3.out', onUpdate: write }, 0.05 + i * 0.12)
+            tl.fromTo(n, { v: 0 }, { v: to, duration: 1.5, ease: 'power3.out', onUpdate: write }, 0.05 + i * 0.12)
           })
         }
-        running.set(blk, tl)
-      })
+        return tl
+      }
 
-      self.add('leave', (phase) => {
-        const blk = q(phase.sel)[0]
-        running.get(blk)?.kill()
+      const buildLeave = (blk) => {
         const sharp = blk.querySelectorAll('.bt-sharp')
         const blur = blk.querySelectorAll('.bt-blur')
         const rest = blk.querySelectorAll('.rise')
         const leds = blk.querySelectorAll('.led')
         const halo = blk.querySelectorAll('.driver-halo')
         const each = 0.012
-        const layers = [...sharp, ...blur]
+        return (
+          gsap
+            .timeline({ paused: true, defaults: { immediateRender: false }, onStart: animOn(blk), onComplete: animOff(blk) })
+            // la copie nette s'efface pendant que la floue passe brièvement : flou doux
+            .fromTo(sharp, { opacity: 1 }, { opacity: 0, duration: 0.3, stagger: each, ease: 'power1.in' }, 0)
+            // deux tweens simples plutôt que keyframes (timeline interne ré-initialisée)
+            .fromTo(blur, { opacity: 0 }, { opacity: 0.65, duration: 0.25, stagger: each, ease: 'none' }, 0)
+            .fromTo(blur, { opacity: 0.65 }, { opacity: 0, duration: 0.25, stagger: each, ease: 'none' }, 0.25)
+            .fromTo(rest, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.35, stagger: 0.03, ease: 'power1.in' }, 0)
+            .fromTo(leds, { scaleX: 1 }, { scaleX: 0, duration: 0.35, ease: 'power2.in' }, 0)
+            .fromTo(halo, { opacity: 1 }, { opacity: 0, duration: 0.4 }, 0)
+            .set(blk, { autoAlpha: 0 })
+        )
+      }
 
-        const tl = gsap
-          .timeline({
-            defaults: { overwrite: 'auto' },
-            onComplete: () => gsap.set(layers, { willChange: 'auto' }),
-          })
-          .set(layers, { willChange: 'opacity' })
-          // la copie nette s'efface pendant que la floue passe brièvement : flou doux
-          .to(sharp, { opacity: 0, duration: 0.3, stagger: each, ease: 'power1.in' }, 0)
-          .to(blur, { keyframes: { opacity: [0, 0.65, 0] }, duration: 0.5, stagger: each, ease: 'none' }, 0)
-          .to(rest, { opacity: 0, y: -10, duration: 0.35, stagger: 0.03, ease: 'power1.in' }, 0)
-          .to(leds, { scaleX: 0, duration: 0.35, ease: 'power2.in' }, 0)
-          .to(halo, { opacity: 0, duration: 0.4 }, 0)
-          .set(blk, { autoAlpha: 0 })
+      const play = (blk, key, build) => {
+        running.get(blk)?.pause()
+        let tl = cache.get(key)
+        if (!tl) cache.set(key, (tl = build()))
+        tl.timeScale(1).restart()
         running.set(blk, tl)
+      }
+
+      self.add('enter', (phase) => {
+        const blk = q(phase.sel)[0]
+        // les compteurs ne tournent qu'au premier passage
+        const counting = phase.counters && !countersDone
+        if (counting) countersDone = true
+        play(blk, `${phase.sel}:in${counting ? ':count' : ''}`, () => buildEnter(blk, counting))
+      })
+
+      self.add('leave', (phase) => {
+        const blk = q(phase.sel)[0]
+        const cur = running.get(blk)
+        // sortie pendant l'entrée : on rembobine l'entrée (pas de saut d'opacité)
+        if (cur?.isActive() && cache.get(`${phase.sel}:out`) !== cur) {
+          cur.timeScale(2).reverse()
+          return
+        }
+        play(blk, `${phase.sel}:out`, () => buildLeave(blk))
       })
 
       const active = new Set()
@@ -188,6 +212,8 @@ export default function Hero({ onDiscover }) {
           pin: true,
           scrub: 0.3,
           invalidateOnRefresh: true,
+          // calques compositeur seulement pendant le pin
+          onToggle: willChangeWhileActive(q('.hero-lit, .hero-media'), 'opacity'),
         },
       })
 
@@ -208,6 +234,10 @@ export default function Hero({ onDiscover }) {
             end: 'bottom 40%', // noir complet après 60 % d'écran, même si la page est courte
             scrub: true,
             invalidateOnRefresh: true,
+            onToggle: (self) => {
+              willChangeWhileActive(q('.hero-veil'), 'opacity')(self)
+              willChangeWhileActive(q('.hero-layers, .hero-copy'))(self)
+            },
           },
         })
         .to(q('.hero-veil'), { opacity: 1, duration: 1 }, 0)

@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: clamp(2.5rem, 6vw, 7rem);
-  padding: clamp(5rem, 14vh, 9rem) var(--gutter);
+  padding: clamp(4rem, 10vh, 6rem) var(--gutter);
   background: var(--nuit);
 }
 
@@ -58,7 +58,7 @@
 }
 .field textarea {
   resize: vertical;
-  min-height: 7rem;
+  min-height: 5.5rem;
 }
 .field select {
   padding-right: 1.5rem;

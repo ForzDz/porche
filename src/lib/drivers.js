@@ -105,7 +105,9 @@ export function createFrameDriver(canvas, { onFirstFrame } = {}) {
   }
 
   const resize = () => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    // frames de 406 px de haut : toujours agrandies, un canvas en DPR 2 ne
+    // ferait que quadrupler les pixels à remplir sans gagner en netteté
+    const dpr = 1
     const { width, height } = canvas.getBoundingClientRect()
     canvas.width = Math.max(1, Math.round(width * dpr))
     canvas.height = Math.max(1, Math.round(height * dpr))

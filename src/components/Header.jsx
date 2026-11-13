@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { NAV } from '../content.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
-import { scrollToHeroProgress, scrollToY } from '../lib/scroll.js'
+import { onLenisScroll, scrollToHeroProgress, scrollToY } from '../lib/scroll.js'
 import './Header.css'
 
 const DELTA = 6 // px de scroll ignorés (évite le clignotement)
@@ -17,29 +17,22 @@ export default function Header() {
   useEffect(() => {
     if (reduced) return
     const el = ref.current
-    let lastY = window.scrollY
+    const h = el.offsetHeight // lu une fois, jamais pendant le scroll
+    let lastY = 0
     let hidden = false
-    let queued = false
 
-    const update = () => {
-      queued = false
-      const y = window.scrollY
+    // valeurs déjà calculées par Lenis : aucune lecture de layout par frame
+    const off = onLenisScroll(({ scroll: y }) => {
       const d = y - lastY
       if (Math.abs(d) < DELTA) return
       lastY = y
-      const hide = d > 0 && y > el.offsetHeight
+      const hide = d > 0 && y > h
       if (hide === hidden) return
       hidden = hide
       el.classList.toggle('is-hidden', hide)
-    }
-    const onScroll = () => {
-      if (queued) return
-      queued = true
-      requestAnimationFrame(update)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
+    })
     return () => {
-      window.removeEventListener('scroll', onScroll)
+      off()
       el.classList.remove('is-hidden')
     }
   }, [reduced])

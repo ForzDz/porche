@@ -34,8 +34,7 @@
 }
 .hero-lit,
 .hero-media {
-  opacity: 0;
-  will-change: opacity;
+  opacity: 0; /* will-change posé par le JS pendant le pin seulement */
 }
 
 .hero-poster {
@@ -75,7 +74,6 @@
   background: var(--nuit);
   opacity: 0;
   pointer-events: none;
-  will-change: opacity;
 }
 
 /* ── Calque texte : borné au petit viewport (toujours visible) ── */
@@ -95,6 +93,11 @@
 /* :where() = spécificité 0 : .stat et .btn-outline gardent leur display */
 :where(.rise) {
   display: inline-block;
+}
+
+/* Calques compositeur seulement pendant une entrée/sortie de texte (classe posée par le JS) */
+.blk.is-anim :is(.bt-ch, .bt-line, .rise, .led) {
+  will-change: transform, opacity;
 }
 
 /* ── Flou → net : deux copies, seule l'opacité est animée ── */
@@ -131,10 +134,6 @@
   color: transparent;
   text-shadow: 0 0 max(5px, 0.16em) var(--bt-color);
   pointer-events: none;
-}
-.t-sub .bt-blur,
-.stat-unit .bt-blur {
-  --bt-color: var(--acier);
 }
 .stat-num {
   font-variant-numeric: tabular-nums lining-nums;

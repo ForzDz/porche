@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, ScrollTrigger } from '../lib/scroll.js'
+import { gsap, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { LINES } from '../content.js'
 import './Lines.css'
@@ -31,6 +31,7 @@ export default function Lines() {
               start: 'top 92%',
               end: 'top 42%',
               scrub: true,
+              onToggle: willChangeWhileActive([mask, img]),
             },
           })
           .fromTo(mask, { yPercent: 100 }, { yPercent: 0, ease: 'power2.out', duration: 1 }, 0)

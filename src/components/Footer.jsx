@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, scrollToSection } from '../lib/scroll.js'
+import { gsap, scrollToSection, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { FOOTER_LINKS, LEGAL } from '../content.js'
 import './Footer.css'
@@ -28,6 +28,7 @@ export default function Footer() {
             end: 'bottom bottom',
             scrub: 0.4,
             invalidateOnRefresh: true,
+            onToggle: willChangeWhileActive('.ft-mask, .ft-fill'),
           },
         })
         .fromTo('.ft-mask', { xPercent: -100 }, { xPercent: 0 }, 0)

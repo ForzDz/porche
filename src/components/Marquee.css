@@ -2,7 +2,7 @@
 .marquee {
   position: relative;
   overflow: hidden;
-  padding: clamp(2.5rem, 7vh, 5rem) 0;
+  padding: clamp(2rem, 5vh, 3.5rem) 0;
   border-block: 1px solid var(--carbone);
   background: var(--nuit);
 }
@@ -10,7 +10,6 @@
 .marquee-track {
   display: flex;
   width: max-content;
-  will-change: transform; /* contour rastérisé une fois, puis translation GPU */
 }
 
 .marquee-group {
@@ -31,9 +30,5 @@
   -webkit-text-stroke: 1px color-mix(in srgb, var(--chrome) 72%, transparent);
 }
 
-/* Mouvement réduit : le JS ne démarre pas, bandeau figé */
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    will-change: auto;
-  }
-}
+/* will-change posé par le JS seulement quand le bandeau est à l'écran.
+   Mouvement réduit : le JS ne démarre pas, bandeau figé. */

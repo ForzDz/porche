@@ -37,13 +37,24 @@ export function useMagnetic() {
         xTo(0)
         yTo(0)
       }
-      el.addEventListener('pointerenter', enter)
-      el.addEventListener('pointermove', move)
-      el.addEventListener('pointerleave', leave)
+      const listen = (on) => {
+        const fn = on ? 'addEventListener' : 'removeEventListener'
+        el[fn]('pointerenter', enter)
+        el[fn]('pointermove', move)
+        el[fn]('pointerleave', leave)
+      }
+      // hors écran : écouteurs retirés, bouton remis au repos
+      let active = false
+      const io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting === active) return
+        active = e.isIntersecting
+        listen(active)
+        if (!active) leave()
+      })
+      io.observe(el)
       return () => {
-        el.removeEventListener('pointerenter', enter)
-        el.removeEventListener('pointermove', move)
-        el.removeEventListener('pointerleave', leave)
+        io.disconnect()
+        if (active) listen(false)
         gsap.killTweensOf(el, 'x,y')
         gsap.set(el, { clearProps: 'transform' })
       }

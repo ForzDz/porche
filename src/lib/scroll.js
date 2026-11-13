@@ -7,14 +7,24 @@ gsap.registerPlugin(ScrollTrigger)
 ScrollTrigger.config({ ignoreMobileResize: true })
 
 let lenis = null
+const subs = new Set()
 
-/** Lenis piloté par le ticker GSAP : une seule boucle rAF pour tout le site. */
+/**
+ * Lenis piloté par le ticker GSAP : une seule boucle rAF pour tout le site.
+ * lerp 0.12 : suit la molette de près, l'inertie retombe en ~0,3 s.
+ */
 export function startLenis() {
   if (lenis) return lenis
-  lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
-  lenis.on('scroll', ScrollTrigger.update)
+  lenis = new Lenis({ lerp: 0.12, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1 })
+  lenis.on('scroll', (l) => {
+    ScrollTrigger.update()
+    subs.forEach((fn) => fn(l))
+  })
   if (locked) lenis.stop()
-  gsap.ticker.add(raf)
+  // prioritize = true : Lenis scrolle AVANT que GSAP rende ses tweens.
+  // Sinon window.scrollTo arrive après les écritures de style de la frame
+  // et force un recalcul synchrone (mesuré : ~800 ms sur un scroll complet, CPU ×4).
+  gsap.ticker.add(raf, false, true)
   gsap.ticker.lagSmoothing(0)
   return lenis
 }
@@ -65,4 +75,26 @@ export function setScrollLock(on) {
   document.documentElement.classList.toggle('is-locked', on)
   if (on) lenis?.stop()
   else lenis?.start()
+}
+
+/**
+ * Abonnement au scroll Lenis : reçoit { scroll, direction, velocity } déjà
+ * calculés → aucune lecture de window.scrollY (pas de layout forcé).
+ * Fonctionne même si l'abonnement précède startLenis().
+ */
+export function onLenisScroll(fn) {
+  subs.add(fn)
+  return () => subs.delete(fn)
+}
+
+/** Vitesse de scroll en px/s (0 sans Lenis). */
+export const getScrollVelocity = () => Math.abs(lenis?.velocity ?? 0) * 60
+
+/**
+ * will-change posé seulement pendant qu'un trigger scrubé est actif,
+ * retiré dès qu'il sort de sa plage. À passer en `onToggle`.
+ */
+export const willChangeWhileActive = (targets, value = 'transform') => {
+  const els = gsap.utils.toArray(targets)
+  return (self) => els.forEach((el) => (el.style.willChange = self.isActive ? value : ''))
 }
