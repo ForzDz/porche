@@ -6,9 +6,9 @@ import Marquee from './components/Marquee.jsx'
 import Lines from './components/Lines.jsx'
 import Range from './components/Range.jsx'
 import Contact from './components/Contact.jsx'
+import Footer from './components/Footer.jsx'
 import { MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { scrollToY, startLenis, stopLenis } from './lib/scroll.js'
-import './App.css'
 
 export default function App() {
   const reduced = useMediaQuery(MQ_REDUCED)
@@ -35,12 +35,7 @@ export default function App() {
         <Range />
         <Contact />
       </main>
-      <footer className="site-footer" id="concept">
-        <p className="footer-title">
-          911 GT3 <em>Concept</em>
-        </p>
-        <p className="footer-legal">Projet concept non officiel, sans lien avec Porsche AG.</p>
-      </footer>
+      <Footer />
     </>
   )
 }

@@ -49,3 +49,10 @@ export function scrollToHeroProgress(p, fallbackId) {
 }
 
 export { gsap, ScrollTrigger }
+
+/** Lien de navigation : position dans le hero (p) ou ancre de section. */
+export function scrollToSection({ id, p }) {
+  if (p != null) return scrollToHeroProgress(p, id)
+  const el = document.getElementById(id)
+  if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY)
+}
