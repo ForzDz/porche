@@ -1,16 +1,47 @@
-# React + Vite
+# 911 GT3 — Concept
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Site vitrine **concept non officiel** (tuto YouTube), sans lien avec Porsche AG.
+Le scroll pilote une vidéo : la caméra tourne autour de la voiture, longe le profil,
+la portière s'ouvre et la caméra entre dans l'habitacle jusqu'au volant.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite 8
+- GSAP 3 + ScrollTrigger (scrub, pin)
+- Lenis (smooth scroll, branché sur le ticker GSAP)
+- CSS natif, tokens dans `src/index.css`
+- Lint : oxlint
 
-## React Compiler
+Node **≥ 22.13** (voir `.nvmrc`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Commandes
 
-## Expanding the Oxlint configuration
+```bash
+npm install       # dépendances
+npm run dev       # serveur de dev (http://localhost:5173)
+npm run build     # build de production → dist/
+npm run preview   # sert le build
+npm run lint      # oxlint
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Structure
+
+| Chemin | Rôle |
+|---|---|
+| `src/App.jsx` | ordre des sections, démarrage de Lenis |
+| `src/content.js` | tous les textes et données |
+| `src/components/` | une section = un `.jsx` + un `.css` |
+| `src/lib/scroll.js` | Lenis, GSAP/ScrollTrigger, navigation, verrou de scroll |
+| `src/lib/drivers.js` | scrub de `hero.mp4` (desktop) / séquence canvas `frames/` (mobile) |
+| `src/lib/ready.js` | signal « hero prêt » pour l'écran de chargement |
+| `public/` | vidéo, séquence d'images, images fixes |
+
+Desktop : `public/hero.mp4` (jamais en lecture auto, `currentTime` suit le scroll).
+Mobile : `public/frames/f_001.webp` → `f_181.webp` dessinées sur un canvas.
+`prefers-reduced-motion` : version statique, sans scrub ni pin.
+
+Consignes de travail et direction artistique : voir `CLAUDE.md`.
+
+---
+
+Projet concept non officiel, sans lien avec Porsche AG. Aucun chiffre ni prix réel.
