@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Nuit & Chrome : fond --nuit, LED rouge --rouge (les variables CSS ne s'appliquent pas à un favicon) -->
+  <!-- Nuit et Chrome : fond nuit #0A0A0B, LED rouge #E10600 (pas de variables CSS dans un favicon) -->
   <rect width="32" height="32" fill="#0A0A0B"/>
   <rect x="7" y="20" width="18" height="2" fill="#E10600"/>
 </svg>
