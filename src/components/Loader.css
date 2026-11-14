@@ -19,7 +19,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--fs-h3);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-text);
   color: var(--chrome);
 }
 .loader-mark em {

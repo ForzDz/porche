@@ -1,13 +1,13 @@
 /* ── Get in Touch : formulaire de démo ───────────────────── */
 .contact-title {
-  margin: 0 0 1.5rem;
+  margin: 0 0 var(--sp-6);
 }
 .contact-intro {
   max-width: 34ch;
   margin: 0;
   color: var(--acier);
   font-size: var(--fs-lead);
-  line-height: 1.7;
+  line-height: var(--lh-relaxed);
 }
 
 .contact-form {
@@ -26,7 +26,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-top: 1.25rem;
+  padding-top: var(--sp-5);
   min-width: 0;
 }
 .field input,
@@ -34,7 +34,7 @@
 .field textarea {
   width: 100%;
   min-height: 2.75rem;
-  padding: 0.5rem 0;
+  padding: var(--sp-2) 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -48,7 +48,7 @@
   min-height: 5.5rem;
 }
 .field select {
-  padding-right: 1.5rem;
+  padding-right: var(--sp-6);
   cursor: pointer;
 }
 .field select option {
@@ -73,7 +73,7 @@
   position: absolute;
   left: 0;
   top: 1.25rem;
-  padding: 0.5rem 0;
+  padding: var(--sp-2) 0;
   font-size: var(--fs-body);
   line-height: 1.5;
   color: var(--acier);
@@ -90,7 +90,7 @@
 .field select:focus ~ .field-label,
 .field select:valid ~ .field-label {
   transform: translateY(-1.35rem) scale(0.72);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-text);
 }
 .field:focus-within .field-label {
   color: var(--chrome);
@@ -133,13 +133,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem 1.75rem;
-  padding-top: 0.5rem;
+  gap: var(--sp-4) var(--sp-7);
+  padding-top: var(--sp-2);
 }
 .contact-status {
   margin: 0;
   font-size: var(--fs-small);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-text);
   color: var(--chrome);
   opacity: 0;
   transform: translateY(6px);

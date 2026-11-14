@@ -21,7 +21,7 @@
   max-width: 34ch;
   margin: 0 0 1.25em;
   font-size: var(--fs-lead);
-  line-height: 1.7;
+  line-height: var(--lh-relaxed);
   color: var(--acier);
 }
 .lines-p:first-of-type {
@@ -67,7 +67,7 @@
   display: inline-block;
   margin-top: 0.9rem;
   font-size: var(--fs-small);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-text);
   color: var(--chrome);
 }
 .still-caption .led {
@@ -78,7 +78,7 @@
 /* ── Mobile : texte puis images, rien de collé ── */
 @media (max-width: 767.98px) {
   .lines {
-    gap: 3rem;
+    gap: var(--sp-12);
   }
   .lines-text {
     position: static;
