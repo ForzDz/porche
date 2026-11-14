@@ -8,6 +8,14 @@ Projet concept, sans lien avec Porsche AG.
 
 ## Stack
 React + Vite + GSAP ScrollTrigger + Lenis. Aucune autre lib d'animation.
+Node ≥ 22.13 (`.nvmrc`). Ne pas modifier sans raison `src/lib/scroll.js`,
+`src/lib/drivers.js`, `src/lib/ready.js` (moteur de scroll et de média).
+
+## Direction artistique
+**La DA fait foi dans `DESIGN.md`** (palette, typo, tokens, composants,
+motion, tropes à éviter). Une seule source de vérité : ne pas la recopier ici.
+Tokens dans `src/index.css` (`:root`) : aucune couleur, taille de texte ou
+durée en dur ailleurs.
 
 ## Médias (public/)
 - hero.mp4 : 15 s, 1280x720, 24 i/s, GOP 8, sans son. JAMAIS d'autoplay
@@ -15,21 +23,36 @@ React + Vite + GSAP ScrollTrigger + Lenis. Aucune autre lib d'animation.
 - poster.jpg : première image, affichée pendant le chargement.
 - intro-dark.jpg → intro-lit.jpg : le showroom s'allume au début.
 - frames/f_001.webp à f_181.webp : séquence pour le mobile (canvas).
+- stills/ : images fixes (Lignes, Gamme, hero statique).
 
-## Direction artistique — « Nuit & Chrome »
-- Palette (tokens CSS, jamais de couleur en dur) :
-  --nuit #0A0A0B / --carbone #16171A / --acier #8A8F98
-  --chrome #E8E8EA / --rouge #E10600
-- Typo : titres serif élégant (style éditorial), corps sans-serif léger.
-- Signature : une ligne LED rouge de 1px sous chaque titre.
+## Page (ordre réel, `src/App.jsx`)
+| # | Section | Fichier | Ancre | Rôle |
+|---|---|---|---|---|
+| 0 | Loader | `Loader.jsx` | — | Écran de chargement jusqu'au « hero prêt » (6 s max), scroll verrouillé |
+| 1 | Header | `Header.jsx` | — | Fixe, se cache en descendant. Liens Design / Performance / Habitacle + bouton « Lignes » |
+| 2 | Hero | `Hero.jsx` (`StaticHero.jsx` si mouvement réduit) | `#design` `#performance` `#habitacle` | Pin de 2,75 écrans, vidéo scrubée, carte du texte ci-dessous |
+| 3 | Bandeau | `Marquee.jsx` | — | Texte défilant |
+| 4 | Lignes | `Lines.jsx` | `#lignes` | « Every Line Has a Purpose » : texte sticky + 3 images révélées |
+| 5 | Gamme | `Range.jsx` | `#gamme` | 3 versions fictives (cartes sticky desktop, carrousel mobile). Prix = « Concept » |
+| 6 | Contact | `Contact.jsx` | `#contact` | Formulaire de démo, n'envoie rien |
+| 7 | Footer | `Footer.jsx` | `#concept` | Liens + mention légale |
 
-## Carte du texte (le texte se pose sur le noir, jamais sur la voiture)
+Textes et navigation : tous dans `src/content.js` (source unique).
+Navigation en français, un nom par section, partagé header / footer :
+Design, Performance, Habitacle, Lignes, Gamme, Contact.
+« Découvrir » (hero) et le bouton du header mènent à `#lignes`.
+
+## Carte du texte du hero (le texte se pose sur le noir, jamais sur la voiture)
+Progression du pin (0-1). Fenêtres exactes dans `PHASES` (`Hero.jsx`).
 | Scroll | Image | Texte |
 |---|---|---|
 | 0-10 % | Le showroom s'allume | Rien, seulement l'indicateur de scroll |
-| 10-35 % | Orbite de l'avant au profil | GAUCHE : « Born at Night » + « La 911 GT3, réimaginée. » |
-| 35-65 % | Travelling le long du profil | HAUT GAUCHE : 3 chiffres « 510 ch », « 318 km/h », « 3,4 s 0-100 » + mention « chiffres concept » |
-| 65-100 % | La portière s'ouvre, l'habitacle, le volant | CENTRE BAS : « Built Around the Driver » + bouton « Découvrir » |
+| 12-31 % | Orbite de l'avant au profil | GAUCHE : « Born at Night » + « La 911 GT3, réimaginée. » |
+| 37-60 % | Travelling le long du profil | HAUT GAUCHE : 3 chiffres « 510 ch », « 318 km/h », « 3,4 s 0-100 » + mention « chiffres concept » |
+| 65-76 % | La portière s'ouvre | Rien (le texte attend d'être dans l'habitacle) |
+| 76-100 % | L'habitacle, le volant | CENTRE BAS : « Built Around the Driver » + bouton « Découvrir » |
+
+Liens du header → position dans le pin : Design 24 %, Performance 50 %, Habitacle 86 %.
 
 ## Interdits
 - Aucune vraie photo Porsche, aucun prix présenté comme réel.
@@ -40,4 +63,10 @@ React + Vite + GSAP ScrollTrigger + Lenis. Aucune autre lib d'animation.
 ## Méthode
 - Montre ton approche en 3 lignes avant de coder.
 - Un prompt = un changement. Commit après chaque étape qui marche.
+- `npm run lint` + `npm run build` doivent passer avant chaque commit.
 - Vérifier 1440 / 375 / 320 px et le FPS après chaque changement.
+- Refactor censé être invisible : comparer des captures avant/après.
+
+## Docs
+- `DESIGN.md` : direction artistique (fait foi).
+- `docs/AUDIT.md` : audit initial (état au commit 5986b03).
