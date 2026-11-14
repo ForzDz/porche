@@ -1,19 +1,6 @@
 /* ── Get in Touch : formulaire de démo ───────────────────── */
-.contact {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: var(--gap-grid);
-  padding: var(--space-section) var(--gutter);
-  background: var(--nuit);
-}
-
 .contact-title {
   margin: 0 0 1.5rem;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: var(--fs-display);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
 }
 .contact-intro {
   max-width: 34ch;
@@ -176,9 +163,6 @@
 }
 
 @media (max-width: 767.98px) {
-  .contact {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .contact-row {
     grid-template-columns: minmax(0, 1fr);
   }

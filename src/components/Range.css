@@ -1,7 +1,6 @@
 /* ── The Range : cartes empilées ───────────────────────── */
 .range {
-  padding: var(--space-section) var(--gutter) var(--space-s);
-  background: var(--nuit);
+  padding-bottom: var(--space-s);
 }
 
 .range-head {
@@ -10,11 +9,6 @@
 }
 .range-title {
   margin: 0 0 1.5rem;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: var(--fs-display);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
 }
 .range-intro {
   max-width: 38ch;

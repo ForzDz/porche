@@ -231,9 +231,6 @@
   margin-top: 0.6rem;
   font-size: var(--fs-micro);
   font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--acier);
 }
 .stats-note {
   margin: 1.4rem 0 0;

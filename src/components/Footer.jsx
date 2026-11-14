@@ -56,7 +56,7 @@ export default function Footer() {
           <ul className="ft-links">
             {FOOTER_LINKS.map((l) => (
               <li key={l.id}>
-                <a href={`#${l.id}`} onClick={go(l)}>
+                <a className="label nav-link" href={`#${l.id}`} onClick={go(l)}>
                   {l.label}
                 </a>
               </li>

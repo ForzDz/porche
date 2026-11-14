@@ -55,9 +55,9 @@ export default function Range() {
   const toContact = () => scrollToSection({ id: 'contact' })
 
   return (
-    <section className="range" id="gamme" ref={rootRef} aria-labelledby="range-title">
+    <section className="section range" id="gamme" ref={rootRef} aria-labelledby="range-title">
       <header className="range-head">
-        <h2 className="range-title" id="range-title">
+        <h2 className="section-title range-title" id="range-title">
           {RANGE.title}
           <span className="led" />
         </h2>

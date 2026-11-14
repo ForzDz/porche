@@ -60,9 +60,9 @@ export default function Lines() {
   )
 
   return (
-    <section className="lines" id="lignes" ref={rootRef} aria-labelledby="lines-title">
+    <section className="section grid-5-7 lines" id="lignes" ref={rootRef} aria-labelledby="lines-title">
       <div className="lines-text">
-        <h2 className="lines-title" id="lines-title">
+        <h2 className="section-title lines-title" id="lines-title">
           {LINES.title}
           <span className="led" />
         </h2>

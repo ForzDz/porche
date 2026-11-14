@@ -37,7 +37,7 @@ export default function StaticHero({ onDiscover }) {
             <dl className="stats">
               {STATS.map((s) => (
                 <div className="stat" key={s.label}>
-                  <dt className="stat-label">{s.label}</dt>
+                  <dt className="stat-label label">{s.label}</dt>
                   <dd className="stat-value">
                     {s.value}
                     <span className="stat-unit">{s.unit}</span>

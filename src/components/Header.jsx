@@ -58,7 +58,7 @@ export default function Header() {
         <ul>
           {NAV.map((item) => (
             <li key={item.id}>
-              <a href={`#${item.id}`} onClick={go(item)}>
+              <a className="label nav-link" href={`#${item.id}`} onClick={go(item)}>
                 {item.label}
               </a>
             </li>

@@ -343,7 +343,7 @@ export default function Hero({ onDiscover }) {
             <dl className="stats">
               {STATS.map((s) => (
                 <div className="stat" key={s.label}>
-                  <dt className="stat-label rise">{s.label}</dt>
+                  <dt className="stat-label label rise">{s.label}</dt>
                   <dd className="stat-value">
                     <BlurLine text={s.value} className="stat-num" />
                     <span className="stat-unit rise">{s.unit}</span>

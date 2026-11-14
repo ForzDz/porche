@@ -51,34 +51,6 @@
   padding: 0;
   list-style: none;
 }
-.ft-links a {
-  position: relative;
-  display: inline-block;
-  padding: 0.75rem 0;
-  font-size: var(--fs-label);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--acier);
-  transition: color var(--dur-fast);
-}
-.ft-links a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0.45rem;
-  height: 1px;
-  background: var(--rouge);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--dur-base) var(--ease-out);
-}
-.ft-links a:hover {
-  color: var(--chrome);
-}
-.ft-links a:hover::after {
-  transform: scaleX(1);
-}
 .ft-legal {
   margin: 0;
   font-size: var(--fs-label);

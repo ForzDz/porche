@@ -31,9 +31,9 @@ export default function Contact() {
   )
 
   return (
-    <section className="contact" id="contact" aria-labelledby={`${uid}-title`}>
+    <section className="section grid-5-7 contact" id="contact" aria-labelledby={`${uid}-title`}>
       <header className="contact-head">
-        <h2 className="contact-title" id={`${uid}-title`}>
+        <h2 className="section-title contact-title" id={`${uid}-title`}>
           {CONTACT.title}
           <span className="led" />
         </h2>

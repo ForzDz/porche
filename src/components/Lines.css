@@ -1,11 +1,6 @@
 /* ── Every Line Has a Purpose : texte éditorial + 3 images ── */
 .lines {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: var(--gap-grid);
   align-items: start;
-  padding: var(--space-section) var(--gutter);
-  background: var(--nuit);
 }
 
 /* Texte : collé pendant que les images défilent (CSS sticky, pas de pin) */
@@ -16,11 +11,6 @@
 
 .lines-title {
   margin: 0 0 var(--space-m);
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: var(--fs-display);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 .lines-title .led {
@@ -88,7 +78,6 @@
 /* ── Mobile : texte puis images, rien de collé ── */
 @media (max-width: 767.98px) {
   .lines {
-    grid-template-columns: minmax(0, 1fr);
     gap: 3rem;
   }
   .lines-text {
