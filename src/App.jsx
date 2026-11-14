@@ -10,7 +10,7 @@ import Footer from './components/Footer.jsx'
 import Loader from './components/Loader.jsx'
 import { useMagnetic } from './lib/magnetic.js'
 import { MQ_REDUCED, useMediaQuery } from './lib/media.js'
-import { scrollToY, startLenis, stopLenis } from './lib/scroll.js'
+import { scrollToSection, startLenis, stopLenis } from './lib/scroll.js'
 
 export default function App() {
   const reduced = useMediaQuery(MQ_REDUCED)
@@ -23,10 +23,8 @@ export default function App() {
     return stopLenis
   }, [reduced])
 
-  const discover = () => {
-    const el = document.getElementById('concept')
-    if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY)
-  }
+  // « Découvrir » : vers la première section après le hero (Lines)
+  const discover = () => scrollToSection({ id: 'lignes' })
 
   return (
     <>

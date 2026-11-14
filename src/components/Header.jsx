@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { NAV } from '../content.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
-import { onLenisScroll, scrollToHeroProgress, scrollToY } from '../lib/scroll.js'
+import { onLenisScroll, scrollToHeroProgress, scrollToSection, scrollToY } from '../lib/scroll.js'
 import './Header.css'
 
 const DELTA = 6 // px de scroll ignorés (évite le clignotement)
@@ -42,10 +42,10 @@ export default function Header() {
     scrollToHeroProgress(item.p, item.id)
   }
 
-  const toFooter = (e) => {
+  // « Le projet » : vers la section Lines (#lignes)
+  const toProject = (e) => {
     e.preventDefault()
-    const el = document.getElementById('concept')
-    if (el) scrollToY(el.getBoundingClientRect().top + window.scrollY)
+    scrollToSection({ id: 'lignes' })
   }
 
   return (
@@ -63,7 +63,7 @@ export default function Header() {
             </li>
           ))}
         </ul>
-        <a className="btn-outline" href="#concept" onClick={toFooter} data-magnetic>
+        <a className="btn-outline" href="#lignes" onClick={toProject} data-magnetic>
           Le projet
         </a>
       </nav>
