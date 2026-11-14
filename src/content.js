@@ -18,12 +18,22 @@ export const DRIVER = {
   cta: 'Découvrir',
 }
 
-// Liens du header → position dans le hero (progression 0-1) + ancre de repli.
-export const NAV = [
-  { label: 'Design', p: 0.24, id: 'design' },
-  { label: 'Performance', p: 0.5, id: 'performance' },
-  { label: 'Habitacle', p: 0.86, id: 'habitacle' },
-]
+/*
+ * Sections navigables : UN nom (français) par section, partagé par le header
+ * et le footer. `p` = position dans le hero épinglé (progression 0-1),
+ * `id` = ancre (repli si le hero scrubé n'existe pas).
+ */
+const SECTIONS = {
+  design: { label: 'Design', id: 'design', p: 0.24 },
+  performance: { label: 'Performance', id: 'performance', p: 0.5 },
+  habitacle: { label: 'Habitacle', id: 'habitacle', p: 0.86 },
+  lignes: { label: 'Lignes', id: 'lignes' },
+  gamme: { label: 'Gamme', id: 'gamme' },
+  contact: { label: 'Contact', id: 'contact' },
+}
+
+// Liens du header
+export const NAV = [SECTIONS.design, SECTIONS.performance, SECTIONS.habitacle]
 
 // Bandeau défilant (après le hero)
 export const MARQUEE = '911 GT3 · CONCEPT · BORN AT NIGHT · '
@@ -79,12 +89,6 @@ export const CONTACT = {
   sent: 'Concept site, no message sent.',
 }
 
-// Pied de page : liens vers les sections (p = progression dans le hero si besoin)
-export const FOOTER_LINKS = [
-  { label: 'Design', id: 'design', p: 0.24 },
-  { label: 'Performance', id: 'performance', p: 0.5 },
-  { label: 'Range', id: 'gamme' },
-  { label: 'Gallery', id: 'lignes' },
-  { label: 'Contact', id: 'contact' },
-]
+// Pied de page : mêmes sections, mêmes noms que le header
+export const FOOTER_LINKS = [SECTIONS.design, SECTIONS.performance, SECTIONS.gamme, SECTIONS.lignes, SECTIONS.contact]
 export const LEGAL = 'Projet concept non officiel, sans lien avec Porsche AG.'
