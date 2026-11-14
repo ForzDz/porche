@@ -2,35 +2,35 @@
 .lines {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: clamp(2.5rem, 6vw, 7rem);
+  gap: var(--gap-grid);
   align-items: start;
-  padding: clamp(4rem, 10vh, 6rem) var(--gutter);
+  padding: var(--space-section) var(--gutter);
   background: var(--nuit);
 }
 
 /* Texte : collé pendant que les images défilent (CSS sticky, pas de pin) */
 .lines-text {
   position: sticky;
-  top: calc(var(--header-h) + clamp(2rem, 6vh, 4rem));
+  top: calc(var(--header-h) + var(--space-l));
 }
 
 .lines-title {
-  margin: 0 0 clamp(2rem, 5vh, 3rem);
+  margin: 0 0 var(--space-m);
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.6rem, 5.4vw, 5.75rem);
+  font-size: var(--fs-display);
   line-height: 1.02;
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
 .lines-title .led {
-  margin-top: clamp(1rem, 2.5vh, 1.5rem);
+  margin-top: var(--space-2xs);
 }
 
 .lines-p {
   max-width: 34ch;
   margin: 0 0 1.25em;
-  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  font-size: var(--fs-lead);
   line-height: 1.7;
   color: var(--acier);
 }
@@ -41,12 +41,12 @@
 /* Images : une large, puis deux portraits décalés */
 .lines-media {
   display: grid;
-  gap: clamp(2rem, 4vh, 3rem);
+  gap: var(--space-s);
 }
 .lines-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(1rem, 2.5vw, 2.5rem);
+  gap: var(--gap-s);
   align-items: start;
 }
 .still {
@@ -54,7 +54,7 @@
 }
 /* après .still (même spécificité) : sinon margin: 0 annule le décalage */
 .still--low {
-  margin-top: clamp(2rem, 6vh, 4rem);
+  margin-top: var(--space-l);
 }
 .still-frame {
   position: relative;
@@ -76,7 +76,7 @@
 .still-caption {
   display: inline-block;
   margin-top: 0.9rem;
-  font-size: 0.8125rem;
+  font-size: var(--fs-small);
   letter-spacing: 0.04em;
   color: var(--chrome);
 }

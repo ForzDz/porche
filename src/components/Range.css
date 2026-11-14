@@ -1,18 +1,18 @@
 /* ── The Range : cartes empilées ───────────────────────── */
 .range {
-  padding: clamp(4rem, 10vh, 6rem) var(--gutter) clamp(1.5rem, 4vh, 3rem);
+  padding: var(--space-section) var(--gutter) var(--space-s);
   background: var(--nuit);
 }
 
 .range-head {
   max-width: 40rem;
-  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+  margin-bottom: var(--space-m);
 }
 .range-title {
   margin: 0 0 1.5rem;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.6rem, 5.4vw, 5.75rem);
+  font-size: var(--fs-display);
   line-height: 1.02;
   letter-spacing: -0.01em;
 }
@@ -20,7 +20,7 @@
   max-width: 38ch;
   margin: 0;
   color: var(--acier);
-  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  font-size: var(--fs-lead);
   line-height: 1.7;
 }
 
@@ -35,19 +35,19 @@
 .range-cards::after {
   content: '';
   display: block;
-  height: clamp(3rem, 10vh, 6rem);
+  height: var(--space-section);
 }
 
 /* Desktop : la carte colle sous le header, la suivante la recouvre */
 .card {
   position: sticky;
-  top: calc(var(--header-h) + clamp(1rem, 3vh, 2rem));
+  top: calc(var(--header-h) + var(--space-xs));
 }
 /* L'espace entre cartes est porté par le repère (pas de marge sur les cartes) :
    le bas du repère = haut de la carte suivante, et toutes les cartes se
    décollent ensemble à la fin. */
 .card-mark {
-  height: clamp(1.5rem, 4vh, 3rem);
+  height: var(--space-s);
 }
 
 .card-inner {
@@ -78,14 +78,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: clamp(1.75rem, 3.5vw, 3.5rem);
+  padding: var(--gap-l);
 }
 
 .card-title {
   margin: 0 0 1.75rem;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.25rem, 4vw, 4.25rem);
+  font-size: var(--fs-h2);
   line-height: 1;
   letter-spacing: -0.01em;
 }
@@ -94,7 +94,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.9375rem;
+  font-size: var(--fs-small);
   line-height: 1.5;
   color: var(--acier);
 }
@@ -111,14 +111,14 @@
   margin: 0 0 1.75rem;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.375rem;
+  font-size: var(--fs-h3);
   color: var(--chrome);
 }
 .card-price-label {
   margin-right: 0.35em;
   font-family: var(--font-text);
   font-style: normal;
-  font-size: 0.8125rem;
+  font-size: var(--fs-small);
   color: var(--acier);
 }
 

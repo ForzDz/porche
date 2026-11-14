@@ -2,8 +2,8 @@
 .contact {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: clamp(2.5rem, 6vw, 7rem);
-  padding: clamp(4rem, 10vh, 6rem) var(--gutter);
+  gap: var(--gap-grid);
+  padding: var(--space-section) var(--gutter);
   background: var(--nuit);
 }
 
@@ -11,7 +11,7 @@
   margin: 0 0 1.5rem;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.6rem, 5.4vw, 5.75rem);
+  font-size: var(--fs-display);
   line-height: 1.02;
   letter-spacing: -0.01em;
 }
@@ -19,19 +19,19 @@
   max-width: 34ch;
   margin: 0;
   color: var(--acier);
-  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  font-size: var(--fs-lead);
   line-height: 1.7;
 }
 
 .contact-form {
   display: grid;
-  gap: clamp(1.75rem, 4vh, 2.5rem);
+  gap: var(--space-s);
   min-width: 0;
 }
 .contact-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1.75rem, 3vw, 2.5rem);
+  gap: var(--gap-m);
 }
 
 /* Champ : seulement une ligne du bas. Le label monte au focus / si rempli. */
@@ -52,7 +52,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--chrome);
-  font: 300 1rem/1.5 var(--font-text); /* 16px : pas de zoom auto sur iOS */
+  font: 300 var(--fs-body)/1.5 var(--font-text); /* 16px : pas de zoom auto sur iOS */
   appearance: none;
   outline: none;
 }
@@ -87,14 +87,14 @@
   left: 0;
   top: 1.25rem;
   padding: 0.5rem 0;
-  font-size: 1rem;
+  font-size: var(--fs-body);
   line-height: 1.5;
   color: var(--acier);
   transform-origin: left top;
   pointer-events: none;
   transition:
-    transform 0.4s var(--ease-out),
-    color 0.3s;
+    transform var(--dur-base) var(--ease-out),
+    color var(--dur-fast);
 }
 .field input:focus ~ .field-label,
 .field input:not(:placeholder-shown) ~ .field-label,
@@ -132,7 +132,7 @@
 .field-line::after {
   background: var(--rouge);
   transform: scale(0, 0.5);
-  transition: transform 0.55s var(--ease-out);
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 .field:focus-within .field-line::after {
   transform: scale(1, 1);
@@ -151,14 +151,14 @@
 }
 .contact-status {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--fs-small);
   letter-spacing: 0.04em;
   color: var(--chrome);
   opacity: 0;
   transform: translateY(6px);
   transition:
-    opacity 0.4s,
-    transform 0.4s var(--ease-out);
+    opacity var(--dur-base),
+    transform var(--dur-base) var(--ease-out);
 }
 .contact-status.is-on {
   opacity: 1;

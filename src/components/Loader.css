@@ -8,7 +8,7 @@
   justify-items: center;
   gap: 1.1rem;
   background: var(--nuit);
-  transition: opacity 0.6s var(--ease-out) 0.25s;
+  transition: opacity var(--dur-slow) var(--ease-out) var(--delay-loader-out);
 }
 .loader.is-leaving {
   opacity: 0;
@@ -18,7 +18,7 @@
 .loader-mark {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-size: var(--fs-h3);
   letter-spacing: 0.04em;
   color: var(--chrome);
 }
@@ -40,12 +40,12 @@
   background: var(--rouge);
   transform-origin: left center;
   transform: scaleX(0);
-  animation: loader-fill 4s var(--ease-out) forwards;
+  animation: loader-fill var(--dur-loader) var(--ease-out) forwards;
 }
 .loader.is-leaving .loader-bar {
   animation: none;
   transform: scaleX(1);
-  transition: transform 0.3s var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 @keyframes loader-fill {
   to {

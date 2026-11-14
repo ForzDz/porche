@@ -16,6 +16,51 @@
   --scrim: color-mix(in srgb, var(--nuit) 78%, transparent);
   --scrim-soft: color-mix(in srgb, var(--nuit) 45%, transparent);
 
+  /* ── Typographie : 9 niveaux (px à 1440 / 375 / 320) ── */
+  --fs-display: clamp(2.6rem, 5.4vw, 5.75rem); /* 78 / 42 / 42  titres de section, titre du hero */
+  --fs-h1: clamp(2.25rem, 4.6vw, 4.75rem); /*      66 / —        « Built Around the Driver » (desktop) */
+  --fs-h2: clamp(2.25rem, 4vw, 4.25rem); /*        58 / 36 / 36  titres de carte, chiffres (desktop) */
+  --fs-h3: 1.375rem; /*                            22            prix des cartes, marque du loader */
+  --fs-lead: clamp(1rem, 1.15vw, 1.125rem); /*     17 / 16 / 16  chapeaux, sous-titre, marque du header */
+  --fs-body: 1rem; /*                              16            texte courant, champs */
+  --fs-small: 0.875rem; /*                         14            specs, légendes, statut */
+  --fs-label: 0.75rem; /*                          12            labels, liens, boutons */
+  --fs-micro: 0.6875rem; /*                        11            petites mentions */
+  /* décoratifs */
+  --fs-marquee: clamp(3.5rem, 11vw, 10rem);
+  --fs-giant: min(44vw, 30rem);
+  /* variantes mobiles du hero (≤ 767 px), sans équivalent dans l'échelle */
+  --fs-hero-title-sm: clamp(2.25rem, 11vw, 3.25rem);
+  --fs-hero-driver-sm: clamp(2rem, 10vw, 2.75rem);
+  --fs-stat-sm: clamp(1.5rem, 7.4vw, 2.25rem);
+  --fs-stat-label-sm: 0.5625rem;
+
+  /* ── Espacements verticaux (rythme, suit la hauteur d'écran) ── */
+  --space-section: clamp(4rem, 10vh, 6rem); /* padding des sections */
+  --space-xl: clamp(3rem, 7vh, 5rem);
+  --space-l: clamp(2rem, 6vh, 4rem);
+  --space-m: clamp(2rem, 5vh, 3.5rem); /*  entre en-tête et contenu */
+  --space-s: clamp(1.75rem, 4vh, 2.5rem); /* entre blocs d'une même section */
+  --space-xs: clamp(1.5rem, 3vh, 2.25rem);
+  --space-2xs: clamp(1rem, 2.5vh, 1.5rem);
+  /* ── Espacements horizontaux (suit la largeur) ── */
+  --gap-grid: clamp(2.5rem, 6vw, 7rem); /* colonnes de la grille 5/7 */
+  --gap-l: clamp(1.75rem, 3.5vw, 3.5rem);
+  --gap-m: clamp(1.75rem, 3vw, 2.5rem);
+  --gap-s: clamp(1rem, 2.4vw, 2.5rem);
+
+  /* ── Motion ── */
+  --dur-fast: 0.3s; /* couleurs, retours rapides */
+  --dur-base: 0.4s; /* soulignés, flèches, labels */
+  --dur-slow: 0.6s; /* fondus, header, lignes de champ */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* chorégraphies ponctuelles */
+  --dur-loader: 4s;
+  --delay-loader-out: 0.25s;
+  --dur-cue-in: 1.2s;
+  --delay-cue-in: 0.8s;
+  --dur-cue-loop: 2.2s;
+
   color-scheme: dark;
 }
 
@@ -35,7 +80,7 @@ body {
 body {
   font-family: var(--font-text);
   font-weight: 300;
-  font-size: 1rem;
+  font-size: var(--fs-body);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -93,7 +138,7 @@ a {
   border-radius: 0;
   background: transparent;
   color: var(--chrome);
-  font: 400 0.75rem/1 var(--font-text);
+  font: 400 var(--fs-label)/1 var(--font-text);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
@@ -109,7 +154,7 @@ a {
   background: var(--chrome);
   transform: scaleX(0);
   transform-origin: right center;
-  transition: transform 0.45s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-out);
 }
 .btn-outline:hover {
   color: var(--nuit);
@@ -121,7 +166,7 @@ a {
 /* Flèche des boutons (hero, contact) */
 .btn-arrow {
   display: inline-block;
-  transition: transform 0.4s var(--ease-out);
+  transition: transform var(--dur-base) var(--ease-out);
 }
 .btn-outline:hover .btn-arrow {
   transform: translateY(3px);

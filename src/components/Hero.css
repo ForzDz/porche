@@ -38,7 +38,7 @@
 }
 
 .hero-poster {
-  transition: opacity 0.6s var(--ease-out);
+  transition: opacity var(--dur-slow) var(--ease-out);
 }
 .hero-poster.is-hidden {
   opacity: 0;
@@ -165,7 +165,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.5rem, 5.4vw, 5.75rem);
+  font-size: var(--fs-display);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--chrome);
@@ -177,7 +177,7 @@
 
 .t-sub {
   margin: 1.25rem 0 0;
-  font-size: clamp(0.95rem, 1.25vw, 1.15rem);
+  font-size: var(--fs-lead);
   letter-spacing: 0.04em;
   color: var(--acier);
 }
@@ -197,7 +197,7 @@
 .stats {
   display: grid;
   grid-template-columns: repeat(3, auto);
-  gap: clamp(1.5rem, 3.6vw, 3.5rem);
+  gap: var(--gap-l);
   margin: 0;
 }
 .stat {
@@ -208,7 +208,7 @@
 .stat-value {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 3.8vw, 3.75rem);
+  font-size: var(--fs-h2);
   line-height: 1;
   font-variant-numeric: lining-nums;
   white-space: nowrap;
@@ -229,7 +229,7 @@
 }
 .stat-label {
   margin-top: 0.6rem;
-  font-size: 0.6875rem;
+  font-size: var(--fs-micro);
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -237,7 +237,7 @@
 }
 .stats-note {
   margin: 1.4rem 0 0;
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--acier);
@@ -252,10 +252,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(1.5rem, 3vh, 2.25rem);
+  gap: var(--space-xs);
 }
 .blk-driver .t-display {
-  font-size: clamp(2.25rem, 4.6vw, 4.75rem);
+  font-size: var(--fs-h1);
 }
 .led-center {
   margin-inline: auto;
@@ -275,10 +275,10 @@
   align-items: center;
   gap: 0.75rem;
   opacity: 0;
-  animation: cue-in 1.2s 0.8s var(--ease-out) forwards;
+  animation: cue-in var(--dur-cue-in) var(--delay-cue-in) var(--ease-out) forwards;
 }
 .hero-cue-label {
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--acier);
@@ -296,7 +296,7 @@
   inset: 0;
   background: var(--rouge);
   transform: translateY(-100%);
-  animation: cue-run 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation: cue-run var(--dur-cue-loop) var(--ease-in-out) infinite;
 }
 @keyframes cue-in {
   to {
@@ -348,7 +348,7 @@
 
 @media (max-width: 767.98px) {
   .t-display {
-    font-size: clamp(2.25rem, 11vw, 3.25rem);
+    font-size: var(--fs-hero-title-sm);
   }
   .blk-intro .t-display span.rise {
     max-width: 7ch;
@@ -358,19 +358,19 @@
     gap: 0.75rem;
   }
   .stat-value {
-    font-size: clamp(1.5rem, 7.4vw, 2.25rem);
+    font-size: var(--fs-stat-sm);
   }
   .stat-unit {
     display: block;
     margin: 0.45rem 0 0;
-    font-size: 0.6875rem;
+    font-size: var(--fs-micro);
     vertical-align: baseline;
   }
   .stat-label {
-    font-size: 0.5625rem;
+    font-size: var(--fs-stat-label-sm);
     letter-spacing: 0.16em;
   }
   .blk-driver .t-display {
-    font-size: clamp(2rem, 10vw, 2.75rem);
+    font-size: var(--fs-hero-driver-sm);
   }
 }
