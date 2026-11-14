@@ -90,6 +90,15 @@ export default function Hero({ onDiscover }) {
       const cache = new Map()
       const running = new Map()
       let countersDone = false
+      /*
+       * Ajoute un fromTo seulement si la cible existe : chaque bloc n'a pas
+       * tous les éléments (pas de flou dans les chiffres, pas de .rise ni de
+       * halo dans l'intro). Évite les warnings « GSAP target not found ».
+       * Durées des timelines inchangées : la fin est toujours fixée par un
+       * tween présent (vérifié à l'exécution).
+       */
+      const fromTo = (tl, targets, from, to, pos) => (targets.length ? tl.fromTo(targets, from, to, pos) : tl)
+
       const animOn = (blk) => () => blk.classList.add('is-anim')
       const animOff = (blk) => () => blk.classList.remove('is-anim')
 
@@ -113,16 +122,15 @@ export default function Hero({ onDiscover }) {
           .set(blk, { autoAlpha: 1 }, 0)
         // hors comptage, les chiffres affichent leur valeur finale (même après un rembobinage)
         if (!counting && nums.length) tl.call(() => nums.forEach((num, i) => (num.textContent = STATS[i].value)), null, 0)
-        tl
-          // la lettre arrive (floue si grand titre), légèrement basse et grande…
-          .fromTo(units, { y: '0.22em', scale: 1.06 }, { y: 0, scale: 1, duration: 0.8, stagger: each, ease: 'expo.out' }, 0)
-          .fromTo(blur, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: each, ease: 'power1.out' }, 0)
-          // …puis se met au point : la copie nette remplace la floue
-          .fromTo(sharp, { opacity: 0 }, { opacity: 1, duration: 0.38, stagger: each, ease: 'power2.out' }, blur.length ? 0.2 : 0)
-          .fromTo(blur, { opacity: 1 }, { opacity: 0, duration: 0.42, stagger: each, ease: 'power1.in' }, 0.26)
-          .fromTo(rest, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, 0.25)
-          .fromTo(leds, { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: 'power3.inOut' }, 0.3)
-        if (halo.length) tl.fromTo(halo, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: 'power2.out' }, 0)
+        // la lettre arrive (floue si grand titre), légèrement basse et grande…
+        fromTo(tl, units, { y: '0.22em', scale: 1.06 }, { y: 0, scale: 1, duration: 0.8, stagger: each, ease: 'expo.out' }, 0)
+        fromTo(tl, blur, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: each, ease: 'power1.out' }, 0)
+        // …puis se met au point : la copie nette remplace la floue
+        fromTo(tl, sharp, { opacity: 0 }, { opacity: 1, duration: 0.38, stagger: each, ease: 'power2.out' }, blur.length ? 0.2 : 0)
+        fromTo(tl, blur, { opacity: 1 }, { opacity: 0, duration: 0.42, stagger: each, ease: 'power1.in' }, 0.26)
+        fromTo(tl, rest, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, 0.25)
+        fromTo(tl, leds, { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: 'power3.inOut' }, 0.3)
+        fromTo(tl, halo, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: 'power2.out' }, 0)
         if (counting) {
           tl.call(() => nums.forEach((num, i) => (num.textContent = formatStat(0, STATS[i].decimals))), null, 0)
           blk.querySelectorAll('.stat-value .bt-line').forEach((line, i) => {
@@ -143,19 +151,16 @@ export default function Hero({ onDiscover }) {
         const leds = blk.querySelectorAll('.led')
         const halo = blk.querySelectorAll('.driver-halo')
         const each = 0.012
-        return (
-          gsap
-            .timeline({ paused: true, defaults: { immediateRender: false }, onStart: animOn(blk), onComplete: animOff(blk) })
-            // la copie nette s'efface pendant que la floue passe brièvement : flou doux
-            .fromTo(sharp, { opacity: 1 }, { opacity: 0, duration: 0.3, stagger: each, ease: 'power1.in' }, 0)
-            // deux tweens simples plutôt que keyframes (timeline interne ré-initialisée)
-            .fromTo(blur, { opacity: 0 }, { opacity: 0.65, duration: 0.25, stagger: each, ease: 'none' }, 0)
-            .fromTo(blur, { opacity: 0.65 }, { opacity: 0, duration: 0.25, stagger: each, ease: 'none' }, 0.25)
-            .fromTo(rest, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.35, stagger: 0.03, ease: 'power1.in' }, 0)
-            .fromTo(leds, { scaleX: 1 }, { scaleX: 0, duration: 0.35, ease: 'power2.in' }, 0)
-            .fromTo(halo, { opacity: 1 }, { opacity: 0, duration: 0.4 }, 0)
-            .set(blk, { autoAlpha: 0 })
-        )
+        const tl = gsap.timeline({ paused: true, defaults: { immediateRender: false }, onStart: animOn(blk), onComplete: animOff(blk) })
+        // la copie nette s'efface pendant que la floue passe brièvement : flou doux
+        fromTo(tl, sharp, { opacity: 1 }, { opacity: 0, duration: 0.3, stagger: each, ease: 'power1.in' }, 0)
+        // deux tweens simples plutôt que keyframes (timeline interne ré-initialisée)
+        fromTo(tl, blur, { opacity: 0 }, { opacity: 0.65, duration: 0.25, stagger: each, ease: 'none' }, 0)
+        fromTo(tl, blur, { opacity: 0.65 }, { opacity: 0, duration: 0.25, stagger: each, ease: 'none' }, 0.25)
+        fromTo(tl, rest, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.35, stagger: 0.03, ease: 'power1.in' }, 0)
+        fromTo(tl, leds, { scaleX: 1 }, { scaleX: 0, duration: 0.35, ease: 'power2.in' }, 0)
+        fromTo(tl, halo, { opacity: 1 }, { opacity: 0, duration: 0.4 }, 0)
+        return tl.set(blk, { autoAlpha: 0 })
       }
 
       const play = (blk, key, build) => {
