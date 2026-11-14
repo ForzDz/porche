@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { NAV } from '../content.js'
+import { useMagnetic } from '../lib/magnetic.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { onLenisScroll, scrollToHeroProgress, scrollToSection, scrollToY } from '../lib/scroll.js'
 import './Header.css'
@@ -7,6 +8,7 @@ import './Header.css'
 const DELTA = 6 // px de scroll ignorés (évite le clignotement)
 
 export default function Header() {
+  const magnetic = useMagnetic()
   const reduced = useMediaQuery(MQ_REDUCED)
   const ref = useRef(null)
 
@@ -63,7 +65,7 @@ export default function Header() {
             </li>
           ))}
         </ul>
-        <a className="btn-outline" href="#lignes" onClick={toProject} data-magnetic>
+        <a className="btn-outline" href="#lignes" onClick={toProject} ref={magnetic}>
           Le projet
         </a>
       </nav>

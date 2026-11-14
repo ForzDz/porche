@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
+import { useMagnetic } from '../lib/magnetic.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import { BlurLetters, BlurLine } from './BlurText.jsx'
 import { DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
@@ -55,6 +56,7 @@ const PHASES = [
 ]
 
 export default function Hero({ onDiscover }) {
+  const magnetic = useMagnetic()
   const isMobile = useMediaQuery(MQ_MOBILE)
   const stageRef = useRef(null)
   const videoRef = useRef(null)
@@ -356,7 +358,7 @@ export default function Hero({ onDiscover }) {
             </h2>
             {/* .rise anime y sur l'enveloppe : le bouton garde x/y pour l'effet magnétique */}
             <span className="rise">
-              <button type="button" className="btn-outline" onClick={onDiscover} data-magnetic>
+              <button type="button" className="btn-outline" onClick={onDiscover} ref={magnetic}>
                 {DRIVER.cta}
                 <span className="btn-arrow" aria-hidden="true">
                   ↓

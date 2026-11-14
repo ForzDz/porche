@@ -8,14 +8,12 @@ import Range from './components/Range.jsx'
 import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import Loader from './components/Loader.jsx'
-import { useMagnetic } from './lib/magnetic.js'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { ScrollTrigger, scrollToSection, startLenis, stopLenis } from './lib/scroll.js'
 
 export default function App() {
   const reduced = useMediaQuery(MQ_REDUCED)
   const isMobile = useMediaQuery(MQ_MOBILE)
-  useMagnetic()
 
   /*
    * Recalcul unique des ScrollTriggers. Les layout effects du parent passent
