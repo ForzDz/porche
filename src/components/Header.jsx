@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { NAV } from '../content.js'
+import { HEADER_CTA, NAV } from '../content.js'
 import { useMagnetic } from '../lib/magnetic.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { onLenisScroll, scrollToHeroProgress, scrollToSection, scrollToY } from '../lib/scroll.js'
@@ -44,10 +44,9 @@ export default function Header() {
     scrollToHeroProgress(item.p, item.id)
   }
 
-  // « Le projet » : vers la section Lines (#lignes)
-  const toProject = (e) => {
+  const toCta = (e) => {
     e.preventDefault()
-    scrollToSection({ id: 'lignes' })
+    scrollToSection(HEADER_CTA)
   }
 
   return (
@@ -65,8 +64,8 @@ export default function Header() {
             </li>
           ))}
         </ul>
-        <a className="btn-outline" href="#lignes" onClick={toProject} ref={magnetic}>
-          Le projet
+        <a className="btn-outline" href={`#${HEADER_CTA.id}`} onClick={toCta} ref={magnetic}>
+          {HEADER_CTA.label}
         </a>
       </nav>
     </header>

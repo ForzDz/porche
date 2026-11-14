@@ -34,6 +34,8 @@ const SECTIONS = {
 
 // Liens du header
 export const NAV = [SECTIONS.design, SECTIONS.performance, SECTIONS.habitacle]
+// Bouton du header : même nom que sa destination
+export const HEADER_CTA = SECTIONS.lignes
 
 // Bandeau défilant (après le hero)
 export const MARQUEE = '911 GT3 · CONCEPT · BORN AT NIGHT · '
@@ -89,6 +91,6 @@ export const CONTACT = {
   sent: 'Concept site, no message sent.',
 }
 
-// Pied de page : mêmes sections, mêmes noms que le header
-export const FOOTER_LINKS = [SECTIONS.design, SECTIONS.performance, SECTIONS.gamme, SECTIONS.lignes, SECTIONS.contact]
+// Pied de page : mêmes sections, mêmes noms que le header, dans l'ordre de la page
+export const FOOTER_LINKS = [SECTIONS.design, SECTIONS.performance, SECTIONS.lignes, SECTIONS.gamme, SECTIONS.contact]
 export const LEGAL = 'Projet concept non officiel, sans lien avec Porsche AG.'
