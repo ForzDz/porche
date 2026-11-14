@@ -261,13 +261,6 @@
   margin-inline: auto;
   transform-origin: center;
 }
-.btn-arrow {
-  display: inline-block;
-  transition: transform 0.4s var(--ease-out);
-}
-.btn-outline:hover .btn-arrow {
-  transform: translateY(3px);
-}
 
 /* ── Indicateur de scroll ───────────────────────────────── */
 .hero-cue {

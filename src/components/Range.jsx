@@ -9,7 +9,8 @@ import './Range.css'
  * aucun pin GSAP) → la suivante glisse naturellement par-dessus.
  * Pendant ce glissement, la carte précédente : scale 1 → 0.92 + voile
  * noir 0 → 0.45 (transform + opacity uniquement), scrubé et réversible.
- * Mobile / mouvement réduit : cartes empilées normalement, pas de GSAP.
+ * Mobile : carrousel horizontal en scroll-snap (CSS), pas de GSAP.
+ * Mouvement réduit : cartes les unes sous les autres, pas de GSAP.
  */
 const SCALE_TO = 0.92
 const DARK_TO = 0.45

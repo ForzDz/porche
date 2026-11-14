@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
+import { gsap, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { LINES } from '../content.js'
 import './Lines.css'
@@ -40,10 +40,7 @@ export default function Lines() {
       })
     }, rootRef)
 
-    // le hero (pin) peut être recréé après nous (bascule mobile/desktop) :
-    // on remet les triggers dans l'ordre de la page avant de recalculer
-    ScrollTrigger.sort()
-    ScrollTrigger.refresh()
+    // ScrollTrigger.sort() + refresh() : centralisés dans App.jsx
     return () => ctx.revert()
   }, [reduced])
 

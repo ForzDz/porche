@@ -183,11 +183,3 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .field-label,
-  .field-line::after,
-  .contact-status {
-    transition-duration: 0.01s;
-  }
-}

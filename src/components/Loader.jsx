@@ -6,7 +6,11 @@ import './Loader.css'
 const MIN_MS = 450 // évite le flash si tout est en cache
 const MAX_MS = 6000 // garde-fou : réseau lent ou vidéo en erreur
 
-/* Écran de chargement : jusqu'à ce que le hero soit prêt (métadonnées de hero.mp4). */
+/*
+ * Écran de chargement : jusqu'à ce que le hero soit prêt (voir lib/ready.js) —
+ * métadonnées de hero.mp4 sur desktop, première image de la séquence sur
+ * mobile, immédiat en mouvement réduit.
+ */
 export default function Loader() {
   const [state, setState] = useState('loading') // loading → leaving → done
 

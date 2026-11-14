@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { gsap } from './scroll.js'
-import { MQ_REDUCED, useMediaQuery } from './media.js'
+import { MQ_FINE_POINTER, MQ_REDUCED, useMediaQuery } from './media.js'
 
-export const MQ_FINE_POINTER = '(hover: hover) and (pointer: fine)'
 const STRENGTH = 0.32 // part du décalage curseur ↔ centre
 const MAX = 14 // px
 

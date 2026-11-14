@@ -118,6 +118,14 @@ a {
   transform: scaleX(1);
   transform-origin: left center;
 }
+/* Flèche des boutons (hero, contact) */
+.btn-arrow {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-out);
+}
+.btn-outline:hover .btn-arrow {
+  transform: translateY(3px);
+}
 
 /* La barre de défilement ne disparaît pas pendant le verrou du chargement */
 html {

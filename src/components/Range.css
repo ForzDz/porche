@@ -131,7 +131,6 @@
   pointer-events: none;
 }
 
-/* ── Mobile : empilement normal, rien de collé ── */
 /*
  * Mobile : carrousel horizontal (scroll-snap natif, aucun JS).
  * Les 3 cartes restent accessibles au swipe, mais la section ne coûte

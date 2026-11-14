@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
-import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
+import { gsap, willChangeWhileActive } from '../lib/scroll.js'
+import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import { BlurLetters, BlurLine } from './BlurText.jsx'
 import { DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
@@ -53,8 +53,6 @@ const PHASES = [
   { sel: '.blk-stats', from: 0.37, to: 0.6, counters: true },
   { sel: '.blk-driver', from: 0.76, to: Infinity },
 ]
-
-const MQ_FINE_POINTER = '(hover: hover) and (pointer: fine)'
 
 export default function Hero({ onDiscover }) {
   const isMobile = useMediaQuery(MQ_MOBILE)
@@ -283,9 +281,7 @@ export default function Hero({ onDiscover }) {
       }
     }, stage)
 
-    // Les webfonts changent la hauteur des blocs : on recalcule une fois chargées
-    document.fonts?.ready.then(() => ScrollTrigger.refresh())
-
+    // ScrollTrigger.refresh() : centralisé dans App.jsx
     return () => {
       removePointer()
       ctx.revert()
