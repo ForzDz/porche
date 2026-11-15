@@ -3,6 +3,11 @@
 > État analysé : commit `7940d0b` (fin de l'étape 2 + outillage). Lecture seule, aucun code.
 > Captures : `npm run shots -- --name critique --no-mask` (1440 / 375 / 320 × 11 positions).
 > **Le choix de la direction appartient à Yacine.** Ce document ne tranche pas.
+>
+> **Choix de Yacine (15/11/2026) : direction A, « Le showroom s'allume », plus la seule
+> voix honnête de B** (titres et légendes factuels en français, libellés qui disent ce qui
+> se passe vraiment). Le reste de B (dossier numéroté, planche comparative, colophon) et
+> la direction C ne sont pas retenus.
 
 ---
 
