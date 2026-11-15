@@ -37,8 +37,8 @@ const SECTIONS = {
 
 // Liens du header
 export const NAV = [SECTIONS.design, SECTIONS.performance, SECTIONS.habitacle]
-// Bouton du header : même nom que sa destination
-export const HEADER_CTA = SECTIONS.lignes
+// Bouton du header : une action (même verbe que le bouton du hero), mène à Lignes
+export const HEADER_CTA = { ...SECTIONS.lignes, label: DRIVER.cta }
 
 // Bandeau défilant (après le hero)
 export const MARQUEE = '911 GT3 · CONCEPT · ÉTUDE DE STYLE · '
@@ -62,7 +62,7 @@ export const RANGE = {
   title: 'Trois versions imaginées',
   intro: 'Trois versions imaginées pour ce concept. Aucune n’existe, aucune n’est à vendre.',
   price: 'Concept',
-  cta: 'Configurer',
+  cta: 'Tester le formulaire', // mène au formulaire de démo : rien à configurer
   cards: [
     {
       name: 'GT3 Nuit',
@@ -89,8 +89,8 @@ export const RANGE = {
 export const CONTACT = {
   title: 'Formulaire de démo',
   intro: 'Formulaire de démonstration : rien n’est envoyé, rien n’est enregistré.',
-  fields: { name: 'Nom', email: 'E-mail', model: 'Model of interest', message: 'Message' },
-  submit: 'Send',
+  fields: { name: 'Nom', email: 'E-mail', model: 'Version (pour l’exemple)', message: 'Message' },
+  submit: 'Tester l’envoi',
   sent: 'Démo : aucun message n’a été envoyé.',
 }
 

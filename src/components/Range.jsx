@@ -90,6 +90,9 @@ export default function Range() {
                     </p>
                     <button type="button" className="btn-outline" onClick={toContact} ref={magnetic}>
                       {RANGE.cta}
+                      <span className="btn-arrow" aria-hidden="true">
+                        ↓
+                      </span>
                     </button>
                   </div>
                   <span className="card-shade" aria-hidden="true" />
