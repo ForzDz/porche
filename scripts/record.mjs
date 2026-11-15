@@ -90,16 +90,24 @@ try {
   })()
 
   await sleep(HOLD * SLOW)
-  await page.ev(`new Promise((res) => {
-    const max = document.documentElement.scrollHeight - innerHeight
-    const t0 = performance.now()
-    ;(function step(t) {
-      const k = Math.min(1, (t - t0) / ${scrollMs})
-      window.scrollTo(0, max * k)
-      if (k < 1) requestAnimationFrame(step)
-      else res()
-    })(t0)
-  })`)
+  // garde-fou : un screencast CDP peut se figer (vu une fois) → erreur claire au lieu d'attendre
+  const limit = scrollMs * SLOW + 60_000
+  let timer
+  await Promise.race([
+    page.ev(`new Promise((res) => {
+        const max = document.documentElement.scrollHeight - innerHeight
+        const t0 = performance.now()
+        ;(function step(t) {
+          const k = Math.min(1, (t - t0) / ${scrollMs})
+          window.scrollTo(0, max * k)
+          if (k < 1) requestAnimationFrame(step)
+          else res()
+        })(t0)
+      })`),
+    new Promise((_, rej) => {
+      timer = setTimeout(() => rej(new Error(`Enregistrement figé (> ${Math.round(limit / 1000)} s) : relancer npm run record`)), limit)
+    }),
+  ]).finally(() => clearTimeout(timer))
   await sleep(HOLD * SLOW)
   walking = false
   await walk
