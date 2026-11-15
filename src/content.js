@@ -13,9 +13,6 @@ export const STATS = [
 export const formatStat = (v, decimals) => v.toFixed(decimals).replace('.', ',')
 export const STATS_NOTE = 'Chiffres concept'
 
-// Indicateur de défilement (début du hero)
-export const CUE = 'Défiler'
-
 export const DRIVER = {
   title: 'Tout part du volant',
   cta: 'Découvrir',

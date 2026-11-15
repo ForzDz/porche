@@ -242,46 +242,26 @@
   translate: -50% 0;
 }
 .hero-cue-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-3);
   opacity: 0;
   animation: cue-in var(--dur-cue-in) var(--delay-cue-in) var(--ease-out) forwards;
 }
-.hero-cue-label {
-  font-size: var(--fs-micro);
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--chrome); /* acier : illisible sur le sol mouillé */
-  padding-left: 0.32em; /* compense le letter-spacing final */
-}
-.hero-cue-track {
-  position: relative;
-  width: 1px;
-  height: 2.75rem;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--chrome) 45%, transparent);
-}
-.hero-cue-dot {
-  position: absolute;
-  inset: 0;
+/* LED du bas de caisse : un filet rouge qui respire */
+.hero-cue-led {
+  display: block;
+  width: min(40vw, 10rem);
+  height: 1px;
   background: var(--rouge);
-  transform: translateY(-100%);
-  animation: cue-run var(--dur-cue-loop) var(--ease-in-out) infinite;
+  opacity: 0.5; /* creux de la respiration : reste visible sur le sol */
+  animation: cue-pulse var(--dur-cue-loop) var(--ease-in-out) infinite;
 }
 @keyframes cue-in {
   to {
     opacity: 1;
   }
 }
-@keyframes cue-run {
-  0% {
-    transform: translateY(-100%);
-  }
-  55%,
-  100% {
-    transform: translateY(100%);
+@keyframes cue-pulse {
+  50% {
+    opacity: 1;
   }
 }
 

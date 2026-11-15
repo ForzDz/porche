@@ -4,7 +4,7 @@ import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import LightText from './LightText.jsx'
 import { lightReveal, setLit } from '../lib/light.js'
-import { CUE, DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
+import { DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
 import { markHeroReady } from '../lib/ready.js'
 import './Hero.css'
 
@@ -373,12 +373,10 @@ export default function Hero({ onDiscover }) {
             </span>
           </div>
 
+          {/* Invitation à défiler : la LED du bas de caisse qui pulse (opacité) */}
           <div className="hero-cue" aria-hidden="true">
             <div className="hero-cue-inner">
-              <span className="hero-cue-label">{CUE}</span>
-              <span className="hero-cue-track">
-                <span className="hero-cue-dot" />
-              </span>
+              <span className="hero-cue-led" />
             </div>
           </div>
         </div>
