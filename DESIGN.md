@@ -51,7 +51,7 @@ Règles : le rouge ne remplit jamais une grande surface (exception assumée : le
 | `--fs-label` | `0.75rem` | 12 | Labels, liens de nav, boutons |
 | `--fs-micro` | `0.6875rem` | 11 | Petites mentions (« Chiffres concept », « Scroll ») |
 
-Décoratifs : `--fs-marquee` (bandeau), `--fs-giant` (911 du footer).
+Décoratif : `--fs-giant` (911 du footer).
 Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver-sm`, `--fs-stat-sm` (les labels des chiffres restent en `--fs-micro`, 11 px minimum).
 
 **Interlignage** : `--lh-tight` 1 (chiffres, cartes) · titres de section 1.02 · `--lh-body` 1.55 · `--lh-relaxed` 1.7 (paragraphes longs).
@@ -63,7 +63,11 @@ Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver
 |---|---|---|
 | **LED** (signature) | `.led` | Filet `--rouge` 1 px, 7.5rem max sous un titre (2.5–3rem sous un chiffre, une légende, un prix). Entre en `scaleX` 0 → 1 depuis la gauche. |
 | **Bouton** | `.btn-outline` | Contour chrome 55 %, angles vifs, `--fs-label` capitales `--tracking-label`, hauteur min 44 px. Survol : remplissage chrome qui glisse de gauche à droite (`scaleX`), texte passe en nuit. Flèche `.btn-arrow` qui descend de 3 px. |
-| **Titre de section** | `.section-title` | `--fs-display`, Bodoni 400, interlignage 1.02, suivi d'une `.led`. Marges locales au composant. |
+| **Titre de section** | `.section-title` | `--fs-display`, Bodoni 400, interlignage 1.02, suivi d'une `.led`. Marges locales au composant. Texte dans un `LightText` (révélé par la lumière). |
+| **Texte éclairé** (signature, direction A) | `LightText` · `.lt` | Trois couches du même texte : `.lt-dim` (acier, le texte réel) apparaît dans le noir, `.lt-lit` (chrome) est révélée par `.lt-mask` qui glisse de gauche à droite (`xPercent` opposés, même boîte, débord `--lt-bleed` 0.3em pour les jambages), `.lt-beam` = lueur de phare (radial-gradient chrome 22 %) accrochée au bord avant. État CSS par défaut = éclairé. |
+| **Lampe** (direction A) | `Lamp` · `.lamp` | Halo fixe `--lamp-size` (38rem), `radial-gradient` carbone → transparent, `mix-blend-mode: lighten` : le noir devient carbone sous le pointeur, le texte et les images claires restent intacts. Desktop à pointeur fin seulement. Éteint pendant le hero (jamais sur la vidéo). z-index 40. |
+| **LED de transition** | `.lines-led` | `.led` pleine largeur en haut de Lignes (bord à bord) : s'allume de gauche à droite à la sortie du hero, avant le balayage du titre. |
+| **Cue** | `.hero-cue-led` | La LED du bas de caisse : filet rouge 1 px (10rem max) centré en bas du hero, qui respire en opacité 0,5 ↔ 1. Aucun texte. |
 | **Label** | `.label` | `--fs-label`, capitales, `--tracking-label`, acier. La graisse reste à l'élément. |
 | **Lien de nav** | `.label.nav-link` | Label + souligné LED rouge au survol (`scaleX`), texte acier → chrome. Graisse 400 partout (header, menu mobile, footer). |
 | **Carte** (Gamme) | `.card` | Fond carbone, bordure acier 18 %, image 7/12 + texte 5/12. Desktop : sticky, la carte recouverte recule (`scale` 0.92) et s'assombrit (voile nuit 45 %). |
@@ -78,24 +82,29 @@ Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver
 - **Écarts horizontaux** (suivent la largeur) : `--gap-grid` › `--gap-l` › `--gap-m` › `--gap-s`.
 - **Pas fixes** (intérieur des composants) : `--sp-1` 0.25rem … `--sp-12` 3rem.
 - **Rayons** : **0 partout**. Angles vifs. Seule exception : le point de statut du formulaire (cercle).
-- **Ordre de la page** : Loader → Header → Hero (pin 2,75 écrans) → Bandeau → Lignes → Gamme → Contact → Footer.
+- **Ordre de la page** : Loader → Header → Hero (pin 2,75 écrans) → Lignes → Gamme → Contact → Footer (+ lampe fixe, desktop).
 
 ## 6. Depth & Elevation
 
 Pas d'ombres, pas de flou. La profondeur vient de :
-1. la **lumière** (le showroom s'allume, voiles nuit localisés) ;
+1. la **lumière** (le showroom s'allume, voiles nuit localisés, titres balayés par un phare, lampe sous le curseur) ;
 2. l'**opacité** (voile noir de sortie du hero, carte recouverte assombrie) ;
 3. le **recouvrement** (cartes sticky, sections qui montent sur le hero).
 
-z-index : header 50, loader 100, le reste en `-1` local sous `isolation: isolate`.
+z-index : loader 100, header 50, lampe 40, le reste en `-1` local sous `isolation: isolate`.
 
 ## 7. Motion
 
 - **Easings** : `--ease-out` `cubic-bezier(0.22, 1, 0.36, 1)` (par défaut) · `--ease-in-out` `cubic-bezier(0.65, 0, 0.35, 1)` (boucles).
 - **Durées** : `--dur-fast` 0.3s (couleurs) · `--dur-base` 0.4s (soulignés, flèches, labels, remplissage bouton) · `--dur-slow` 0.6s (fondus, header, ligne de champ). Chorégraphies : `--dur-loader`, `--delay-loader-out`, `--dur-cue-in`, `--delay-cue-in`, `--dur-cue-loop`.
-- **Règle absolue** : n'animer que `transform` et `opacity`. Pas de `filter`, pas de `clip-path`, pas de `backdrop-filter` (le flou des titres est une copie pré-floutée en `text-shadow` dont seule l'opacité change).
+- **Règle absolue** : n'animer que `transform` et `opacity`. Pas de `filter`, pas de `clip-path`, pas de `backdrop-filter`, pas d'animation de `mask`.
+- **La lumière est l'interface (direction A)** :
+  - *Révélation des titres* (`lib/light.js`, `lightReveal`) : `.lt-dim` 0 → 1 (0,5 s), masque + copie éclairée qui traversent en 1,1 s (`power2.inOut`), lueur qui naît avec le balayage et s'éteint à l'arrivée, puis la LED du titre s'allume. **Une seule fois par titre.** Sections : au scroll (`useTitleReveal`, `once`). Hero : au premier passage de chaque bloc ; ensuite fondu déjà éclairé ; sortie = la lumière s'éteint (opacité).
+  - *Transition hero → Lignes* : la LED pleine largeur s'allume (1,2 s) puis le titre est balayé.
+  - *Lampe* : suit le pointeur en `transform` (`quickTo` 0,6 s), apparaît / s'éteint en opacité (0,6 s).
+  - *Cue* : respiration d'opacité sur `--dur-cue-loop`.
 - **Scroll** : Lenis + GSAP ScrollTrigger (une seule boucle rAF). La vidéo n'est jamais en lecture : `currentTime` suit le scroll.
-- **Mouvement réduit** : version statique du hero (`StaticHero`), pas de Lenis, transitions CSS instantanées.
+- **Mouvement réduit** : version statique du hero (`StaticHero`), pas de Lenis, transitions CSS instantanées, titres directement éclairés, pas de lampe.
 
 ## 8. Responsive Behavior
 
@@ -111,7 +120,8 @@ Largeurs de contrôle obligatoires : **1440 / 375 / 320**, plus le FPS.
 ## 9. Do's and Don'ts
 
 **Signature — à garder**
-- La **LED rouge 1 px** sous chaque titre.
+- La **LED rouge 1 px** sous chaque titre (et la LED pleine largeur entre le hero et Lignes, la LED du cue).
+- **La lumière comme interface** : ce qui apparaît est éclairé (phare sur les titres, lampe sous le curseur).
 - La palette Nuit & Chrome, un seul accent rouge.
 - La narration caméra → portière → volant pilotée par le scroll.
 - Le texte se pose sur le noir, jamais sur la voiture.
@@ -125,17 +135,18 @@ Largeurs de contrôle obligatoires : **1440 / 375 / 320**, plus le FPS.
 - Aucune vraie photo Porsche, aucun prix présenté comme réel, aucun logo.
 - Pas de `backdrop-filter`, pas d'ombre portée, pas de rayon.
 
-**Tropes à éviter — présents aujourd'hui, À REMPLACER À L'ÉTAPE 4**
+**Tropes à éviter — état après l'étape 4c-1** (barrés = remplacés)
 
 | Trope | Où |
 |---|---|
-| Bandeau défilant en texte contour | `Marquee.jsx` |
+| ~~Bandeau défilant en texte contour~~ | **Remplacé (4c-1)** : LED pleine largeur qui s'allume entre le hero et Lignes |
 | Chiffre géant en contour qui se remplit | `Footer.jsx` (« 911 ») |
 | Cartes sticky empilées qui rétrécissent | `Range.jsx` |
-| Boutons magnétiques + parallaxe au curseur | `lib/magnetic.js`, `Hero.jsx` |
-| Capitales espacées sur chaque élément secondaire | `.label`, `.btn-outline`, stats, cue |
-| Révélation lettre par lettre flou → net + compteurs qui montent | `Hero.jsx`, `BlurText.jsx` |
-| Indicateur « Scroll » avec trait animé | `Hero.jsx` (`.hero-cue`) |
+| ~~Boutons magnétiques + parallaxe au curseur~~ | **Remplacé (4c-1)** : la lampe sous le curseur (`Lamp.jsx`) |
+| Capitales espacées sur chaque élément secondaire | `.label`, `.btn-outline`, stats (plus le cue) |
+| ~~Révélation lettre par lettre flou → net~~ | **Remplacé (4c-1)** : balayage de phare (`LightText`) |
+| Compteurs qui montent | `Hero.jsx` (chiffres) — encore présent |
+| ~~Indicateur « Scroll » avec trait animé~~ | **Remplacé (4c-1)** : la LED du bas de caisse qui respire |
 | ~~Slogans anglais génériques mêlés au français~~ | **Réglé (étape 4b)** : titres courts et factuels en français |
 | Grille éditoriale 5/7 texte-à-gauche / images-à-droite | `.grid-5-7` (Lignes, Contact) |
 | Combo didone + grotesk light sur noir | typo globale |
