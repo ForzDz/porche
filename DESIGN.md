@@ -65,7 +65,7 @@ Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver
 | **Bouton** | `.btn-outline` | Contour chrome 55 %, angles vifs, `--fs-label` capitales `--tracking-label`, hauteur min 44 px. Survol : remplissage chrome qui glisse de gauche à droite (`scaleX`), texte passe en nuit. Flèche `.btn-arrow` qui descend de 3 px. |
 | **Titre de section** | `.section-title` | `--fs-display`, Bodoni 400, interlignage 1.02, suivi d'une `.led`. Marges locales au composant. |
 | **Label** | `.label` | `--fs-label`, capitales, `--tracking-label`, acier. La graisse reste à l'élément. |
-| **Lien de nav** | `.label.nav-link` | Label + souligné LED rouge au survol (`scaleX`), texte acier → chrome. Header en 400, footer en 300. |
+| **Lien de nav** | `.label.nav-link` | Label + souligné LED rouge au survol (`scaleX`), texte acier → chrome. Graisse 400 partout (header, menu mobile, footer). |
 | **Carte** (Gamme) | `.card` | Fond carbone, bordure acier 18 %, image 7/12 + texte 5/12. Desktop : sticky, la carte recouverte recule (`scale` 0.92) et s'assombrit (voile nuit 45 %). |
 | **Formulaire** | `.field` | Pas de boîte : une ligne du bas acier 45 %. Label flottant qui monte et rétrécit au focus. Au focus, la ligne rouge grandit depuis la gauche. Démo : n'envoie rien. |
 

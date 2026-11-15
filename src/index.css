@@ -227,10 +227,11 @@ a {
   color: var(--acier);
 }
 
-/* Lien de navigation (header + footer) : label + souligné LED au survol */
+/* Lien de navigation (header, menu mobile, footer) : label 400 + souligné LED au survol */
 .nav-link {
   position: relative;
   display: inline-block;
+  font-weight: 400;
   padding: var(--sp-3) 0;
   transition: color var(--dur-fast);
 }

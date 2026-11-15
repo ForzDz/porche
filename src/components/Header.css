@@ -47,9 +47,6 @@
   padding: 0;
   list-style: none;
 }
-.site-nav .nav-link {
-  font-weight: 400;
-}
 
 /* Bouton et panneau du menu : mobile uniquement */
 .menu-toggle {
@@ -89,7 +86,6 @@
   align-items: center;
   min-height: 2.75rem;
   padding: 0;
-  font-weight: 400;
 }
 
 /* Mobile : marque + bouton + menu */
