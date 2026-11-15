@@ -24,6 +24,38 @@ npm run preview   # sert le build
 npm run lint      # oxlint
 ```
 
+## Vérification
+
+Protocole de captures avant/après, pour tout changement censé être invisible
+(ou pour mesurer exactement ce qui a changé). Prérequis : **Chrome stable**
+installé (pas le Chromium de Playwright : il ne lit pas l'H.264 de `hero.mp4` ;
+chemin personnalisé via `CHROME_PATH`) et **ffmpeg** dans le PATH (pour `compare`).
+
+```bash
+npm run shots -- --ref HEAD --name avant   # captures d'un commit → .shots/avant/
+npm run shots -- --name apres              # captures de l'arbre de travail → .shots/apres/
+npm run compare -- .shots/avant .shots/apres
+npm run shots:reduced -- --name apres      # idem avec prefers-reduced-motion → .shots/apres-reduced/
+npm run fps                                # FPS pendant un scroll molette (ou --ref <commit>)
+```
+
+- `shots` : build + preview, Chrome headless, attend la fin du loader, capture
+  **1440 / 375 / 320 × 11 positions** (hero à 0, 5, 20, 50, 90 % du pin ;
+  Lignes ×2, Gamme ×2, Contact, Footer). Vérifie aussi que « Découvrir » et le
+  bouton du header arrivent sur `#lignes`, la position des liens de nav et la
+  console (`report.json`). Options : `--reduced`, `--sizes 1440,375`, `--no-mask`
+  (garde vidéo, bandeau et point du cue, pour une critique visuelle).
+- Par défaut, la vidéo/séquence, le bandeau et le point du cue sont **masqués**
+  (ils dépendent du temps) et le rendu est logiciel et déterministe :
+  deux passes sur le même code donnent 33/33 captures identiques au pixel.
+- `compare` : par capture, identique au pixel ou SSIM + écart max (0-255), et une
+  image « A | B | différence ×6 » par écart. Rapport : `report.md`. Code de sortie 1
+  s'il y a une différence.
+- `fps` : chiffres utiles pour **comparer** deux versions dans les mêmes conditions,
+  pas comme FPS absolu (headless, pas de vrai écran).
+
+Les captures vont dans `.shots/` (ignoré par git).
+
 ## Structure
 
 | Chemin | Rôle |
