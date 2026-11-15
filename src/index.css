@@ -5,6 +5,7 @@
   --acier: #8a8f98;
   --chrome: #e8e8ea;
   --rouge: #e10600;
+  --lueur: #f4efe6; /* lumière uniquement (lampe, balayages, reflets) : jamais du texte */
 
   --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
   --font-text: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;

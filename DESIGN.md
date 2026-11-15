@@ -24,6 +24,7 @@
 | `--acier` | `#8A8F98` | Texte secondaire, labels, liens au repos |
 | `--chrome` | `#E8E8EA` | Texte principal, titres, contour et remplissage des boutons |
 | `--rouge` | `#E10600` | **Accent unique** : LED, soulignés, focus, état actif |
+| `--lueur` | `#F4EFE6` | **Lumière uniquement** (blanc chaud, légèrement chrome) : halo de la lampe, balayages, reflets. **Jamais une couleur de texte**, jamais un aplat opaque |
 
 Dérivés (toujours via `color-mix()` sur un token, jamais un hex en dur) :
 - `--scrim` = nuit 78 %, `--scrim-soft` = nuit 45 % → voiles derrière le texte du hero
