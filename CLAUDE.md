@@ -77,6 +77,8 @@ Liens du header → position dans le pin : Design 24 %, Performance 50 %, Habita
   Pas de mode `live` (il peut lancer un agent sans permissions).
 - **Awwwards MCP** (`.mcp.json`, version figée) : inspiration personnelle
   uniquement, pas de scraping massif, rien de republié.
+- **Pas d'agent-browser** : `scripts/shots.mjs` (captures reproductibles) et
+  Claude in Chrome (inspection interactive) suffisent.
 
 ## Docs
 - `DESIGN.md` : direction artistique (fait foi).
