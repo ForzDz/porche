@@ -10,7 +10,7 @@ import './Hero.css'
 
 /*
  * Timeline scrubée normalisée 0 → 1 = toute la course du pin.
- *   0.00-0.10  showroom : intro-dark → intro-lit
+ *   0.00-0.10  showroom : intro-dark → intro-lit + une bande de lueur qui traverse l'écran
  *   0.10-1.00  média (vidéo ou séquence) scrubé
  * Le texte n'est PAS scrubé : la progression scrubée ouvre/ferme des
  * fenêtres (carte de CLAUDE.md) et chaque bloc joue une courte timeline
@@ -236,7 +236,10 @@ export default function Hero({ onDiscover }) {
           onScrubComplete: finishCount,
           invalidateOnRefresh: true,
           // calques compositeur seulement pendant le pin
-          onToggle: willChangeWhileActive(q('.hero-lit, .hero-media'), 'opacity'),
+          onToggle: (self) => {
+            willChangeWhileActive(q('.hero-lit, .hero-media'), 'opacity')(self)
+            willChangeWhileActive(q('.hero-sweep'))(self)
+          },
         },
       })
 
@@ -268,6 +271,8 @@ export default function Hero({ onDiscover }) {
         .to(q('.hero-layers, .hero-copy'), { y: () => window.innerHeight * 0.3, duration: 1 }, 0)
 
       tl.to(q('.hero-lit'), { opacity: 1, duration: INTRO_END }, 0)
+        // le balayage traverse tout l'écran pendant l'allumage (largeur 45vw → 100vw = 223 %)
+        .fromTo(q('.hero-sweep'), { xPercent: -100 }, { xPercent: 223, duration: INTRO_END }, 0)
         .to(q('.hero-cue'), { opacity: 0, y: 12, duration: 0.05 }, 0.03)
         .to(q('.hero-media'), { opacity: 1, duration: 0.03 }, INTRO_END - 0.005)
         .fromTo(
@@ -301,6 +306,8 @@ export default function Hero({ onDiscover }) {
         <div className="hero-layers" aria-hidden="true">
           <img className="hero-img hero-dark" src="/intro-dark.jpg" alt="" fetchPriority="high" decoding="async" />
           <img className="hero-img hero-lit" src="/intro-lit.jpg" alt="" decoding="async" />
+          {/* 0-10 % : une bande de lueur traverse le showroom pendant qu'il s'allume */}
+          <div className="hero-sweep" />
           <div className="hero-media">
             <img ref={posterRef} className="hero-img hero-poster" src="/poster.jpg" alt="" decoding="async" />
             {isMobile ? (

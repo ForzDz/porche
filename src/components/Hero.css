@@ -37,6 +37,27 @@
   opacity: 0; /* will-change posé par le JS pendant le pin seulement */
 }
 
+/* Balayage du showroom (0-10 %) : bande de lueur inclinée, transform seul.
+   Hors champ avant 0 % et après 10 % (overflow du .hero-stage). */
+.hero-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45vw;
+  background: linear-gradient(
+    100deg,
+    transparent 15%,
+    color-mix(in srgb, var(--lueur) 6%, transparent) 38%,
+    color-mix(in srgb, var(--lueur) 22%, transparent) 50%,
+    color-mix(in srgb, var(--lueur) 6%, transparent) 62%,
+    transparent 85%
+  );
+  opacity: var(--sweep-opacity);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+
 .hero-poster {
   transition: opacity var(--dur-slow) var(--ease-out);
 }

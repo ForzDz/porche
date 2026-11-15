@@ -101,7 +101,8 @@ z-index : loader 100, header 50, lampe 40, le reste en `-1` local sous `isolatio
 - **Règle absolue** : n'animer que `transform` et `opacity`. Pas de `filter`, pas de `clip-path`, pas de `backdrop-filter`, pas d'animation de `mask`.
 - **La lumière est l'interface (direction A)** :
   - *Révélation des titres* (`lib/light.js`, `lightReveal`) : titre 0 → 25 % (0,35 s), puis la bande de lumière traverse en 1,2 s (`power2.inOut`) en révélant le titre à 100 %, elle apparaît et s'éteint en fondu, puis la LED du titre s'allume. **Une seule fois par titre.** Sections : au scroll (`useTitleReveal`, `once`). Hero : au premier passage de chaque bloc ; ensuite fondu déjà éclairé ; sortie = la lumière s'éteint (opacité).
-  - *Transition hero → Lignes* : la LED pleine largeur s'allume (1,2 s) puis le titre est balayé.
+  - *Showroom (0-10 % du pin)* : pendant que `intro-lit` s'allume, une bande `--lueur` inclinée (`.hero-sweep`, 45vw, opacité `--sweep-opacity`) traverse l'écran une fois, **scrubée** (`xPercent` −100 → 223). Pas de mode de fusion (le calque est au-dessus de la vidéo).
+  - *Transition hero → Lignes* : la LED pleine largeur s'allume (1,2 s) puis le titre est balayé. Sa lueur rouge (pré-rendue) s'allume avec elle.
   - *Lampe* : suit le pointeur en `transform` (`quickTo` 0,6 s), apparaît / s'éteint en opacité (0,6 s).
   - *Cue* : respiration d'opacité sur `--dur-cue-loop`.
 - **Scroll** : Lenis + GSAP ScrollTrigger (une seule boucle rAF). La vidéo n'est jamais en lecture : `currentTime` suit le scroll.
