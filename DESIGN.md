@@ -42,7 +42,7 @@ Règles : le rouge ne remplit jamais une grande surface (exception assumée : le
 | Token | Valeur | px | Usage |
 |---|---|---|---|
 | `--fs-display` | `clamp(2.6rem, 5.4vw, 5.75rem)` | 78 / 42 / 42 | Titres de section, titre du hero |
-| `--fs-h1` | `clamp(2.25rem, 4.6vw, 4.75rem)` | 66 / — / — | « Built Around the Driver » (desktop) |
+| `--fs-h1` | `clamp(2.25rem, 4.6vw, 4.75rem)` | 66 / — / — | « Tout part du volant » (desktop) |
 | `--fs-h2` | `clamp(2.25rem, 4vw, 4.25rem)` | 58 / 36 / 36 | Titres de carte, chiffres du hero (desktop) |
 | `--fs-h3` | `1.375rem` | 22 | Prix des cartes, marque du loader |
 | `--fs-lead` | `clamp(1rem, 1.15vw, 1.125rem)` | 17 / 16 / 16 | Chapeaux, sous-titre du hero, marque du header |
@@ -136,7 +136,7 @@ Largeurs de contrôle obligatoires : **1440 / 375 / 320**, plus le FPS.
 | Capitales espacées sur chaque élément secondaire | `.label`, `.btn-outline`, stats, cue |
 | Révélation lettre par lettre flou → net + compteurs qui montent | `Hero.jsx`, `BlurText.jsx` |
 | Indicateur « Scroll » avec trait animé | `Hero.jsx` (`.hero-cue`) |
-| Slogans anglais génériques mêlés au français | « Born at Night », « Every Line Has a Purpose », « The Range », « Get in Touch » |
+| ~~Slogans anglais génériques mêlés au français~~ | **Réglé (étape 4b)** : titres courts et factuels en français |
 | Grille éditoriale 5/7 texte-à-gauche / images-à-droite | `.grid-5-7` (Lignes, Contact) |
 | Combo didone + grotesk light sur noir | typo globale |
 

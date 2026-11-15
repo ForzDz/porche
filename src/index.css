@@ -18,7 +18,7 @@
 
   /* ── Typographie : 9 niveaux (px à 1440 / 375 / 320) ── */
   --fs-display: clamp(2.6rem, 5.4vw, 5.75rem); /* 78 / 42 / 42  titres de section, titre du hero */
-  --fs-h1: clamp(2.25rem, 4.6vw, 4.75rem); /*      66 / —        « Built Around the Driver » (desktop) */
+  --fs-h1: clamp(2.25rem, 4.6vw, 4.75rem); /*      66 / —        « Tout part du volant » (desktop) */
   --fs-h2: clamp(2.25rem, 4vw, 4.25rem); /*        58 / 36 / 36  titres de carte, chiffres (desktop) */
   --fs-h3: 1.375rem; /*                            22            prix des cartes, marque du loader */
   --fs-lead: clamp(1rem, 1.15vw, 1.125rem); /*     17 / 16 / 16  chapeaux, sous-titre, marque du header */

@@ -4,7 +4,7 @@ import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { useMagnetic } from '../lib/magnetic.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import { BlurLetters, BlurLine } from './BlurText.jsx'
-import { DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
+import { CUE, DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
 import { markHeroReady } from '../lib/ready.js'
 import './Hero.css'
 
@@ -374,7 +374,7 @@ export default function Hero({ onDiscover }) {
 
           <div className="hero-cue" aria-hidden="true">
             <div className="hero-cue-inner">
-              <span className="hero-cue-label">Scroll</span>
+              <span className="hero-cue-label">{CUE}</span>
               <span className="hero-cue-track">
                 <span className="hero-cue-dot" />
               </span>
