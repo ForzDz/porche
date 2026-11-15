@@ -43,9 +43,6 @@ export const MENU_TOGGLE = 'Menu' // libellé fixe : l'état passe par aria-expa
 // Bouton du header : une action (même verbe que le bouton du hero), mène à Lignes
 export const HEADER_CTA = { ...SECTIONS.lignes, label: DRIVER.cta }
 
-// Bandeau défilant (après le hero)
-export const MARQUEE = '911 GT3 · CONCEPT · ÉTUDE DE STYLE · '
-
 // Section design (après le bandeau). Ton concept : intentions, aucune donnée réelle.
 export const LINES = {
   title: 'L’air d’abord',

@@ -1,6 +1,15 @@
 /* ── L’air d’abord : texte éditorial + 3 images ── */
 .lines {
+  position: relative;
   align-items: start;
+}
+
+/* LED pleine largeur : la transition depuis le hero */
+.lines-led {
+  position: absolute;
+  inset: 0 0 auto 0;
+  max-width: none;
+  margin: 0;
 }
 
 /* Texte : collé pendant que les images défilent (CSS sticky, pas de pin) */

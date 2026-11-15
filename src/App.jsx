@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect } from 'react'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import StaticHero from './components/StaticHero.jsx'
-import Marquee from './components/Marquee.jsx'
 import Lines from './components/Lines.jsx'
 import Range from './components/Range.jsx'
 import Contact from './components/Contact.jsx'
@@ -48,7 +47,6 @@ export default function App() {
       <Header />
       <main id="top">
         {reduced ? <StaticHero onDiscover={discover} /> : <Hero onDiscover={discover} />}
-        <Marquee />
         <Lines />
         <Range />
         <Contact />

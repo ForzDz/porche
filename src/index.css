@@ -28,7 +28,6 @@
   --fs-label: 0.75rem; /*                          12            labels, liens, boutons */
   --fs-micro: 0.6875rem; /*                        11            petites mentions */
   /* décoratifs */
-  --fs-marquee: clamp(3.5rem, 11vw, 10rem);
   --fs-giant: min(44vw, 30rem);
   /* variantes mobiles du hero (≤ 767 px), sans équivalent dans l'échelle */
   --fs-hero-title-sm: clamp(2.25rem, 11vw, 3.25rem);

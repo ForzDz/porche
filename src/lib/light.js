@@ -19,7 +19,9 @@ export function lightReveal(el) {
   tl.fromTo(q('.lt-dim'), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
     .fromTo(q('.lt-mask'), { xPercent: -100 }, { xPercent: 0, duration: SWEEP, ease: 'power2.inOut' }, 0.1)
     .fromTo(q('.lt-lit'), { xPercent: 100 }, { xPercent: 0, duration: SWEEP, ease: 'power2.inOut' }, 0.1)
-    .fromTo(q('.lt-beam'), { opacity: 1 }, { opacity: 0, duration: 0.45, ease: 'power1.out' }, SWEEP - 0.1)
+    // la lueur naît avec le balayage (jamais visible en attendant), puis s'éteint à l'arrivée
+    .fromTo(q('.lt-beam'), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power1.out' }, 0.1)
+    .to(q('.lt-beam'), { opacity: 0, duration: 0.45, ease: 'power1.out' }, SWEEP - 0.1)
   return tl
 }
 

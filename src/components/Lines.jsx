@@ -14,10 +14,18 @@ import './Lines.css'
  *   plus un léger scale 1.1 → 1 sur l'image.
  * Scrubé et réversible. Aucun pin : sur desktop le texte est en position: sticky (CSS).
  */
+/*
+ * Transition hero → Lignes par la lumière : la LED rouge 1 px du haut de la
+ * section s'allume de gauche à droite sur toute la largeur, puis le titre
+ * est balayé (useTitleReveal). Une seule fois.
+ */
+const ledFirst = (tl, root) =>
+  tl.fromTo(root.querySelector('.lines-led'), { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'power2.inOut' })
+
 export default function Lines() {
   const reduced = useMediaQuery(MQ_REDUCED)
   const rootRef = useRef(null)
-  useTitleReveal(rootRef)
+  useTitleReveal(rootRef, { before: ledFirst, start: 'top 75%' })
 
   useLayoutEffect(() => {
     if (reduced) return
@@ -64,6 +72,7 @@ export default function Lines() {
 
   return (
     <section className="section grid-5-7 lines" id="lignes" ref={rootRef} aria-labelledby="lines-title">
+      <span className="led lines-led" aria-hidden="true" />
       <div className="lines-text">
         <h2 className="section-title lines-title" id="lines-title">
           <LightText text={LINES.title} />
