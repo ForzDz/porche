@@ -37,6 +37,9 @@ const SECTIONS = {
 
 // Liens du header
 export const NAV = [SECTIONS.design, SECTIONS.performance, SECTIONS.habitacle]
+// Menu mobile (< 768 px) : toutes les sections, dans l'ordre de la page
+export const MENU = Object.values(SECTIONS)
+export const MENU_TOGGLE = 'Menu' // libellé fixe : l'état passe par aria-expanded
 // Bouton du header : une action (même verbe que le bouton du hero), mène à Lignes
 export const HEADER_CTA = { ...SECTIONS.lignes, label: DRIVER.cta }
 

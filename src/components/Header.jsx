@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { HEADER_CTA, NAV } from '../content.js'
+import { useEffect, useId, useRef, useState } from 'react'
+import { HEADER_CTA, MENU, MENU_TOGGLE, NAV } from '../content.js'
 import { useMagnetic } from '../lib/magnetic.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { onLenisScroll, scrollToHeroProgress, scrollToSection, scrollToY } from '../lib/scroll.js'
@@ -11,6 +11,23 @@ export default function Header() {
   const magnetic = useMagnetic()
   const reduced = useMediaQuery(MQ_REDUCED)
   const ref = useRef(null)
+  const toggleRef = useRef(null)
+  const menuId = useId()
+  const [open, setOpen] = useState(false)
+  const openRef = useRef(false) // lu dans l'abonnement au scroll
+
+  /* Menu mobile ouvert : Échap le ferme et rend le focus au bouton */
+  useEffect(() => {
+    openRef.current = open
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      toggleRef.current?.focus()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
   /*
    * Se cache en descendant, réapparaît en remontant (transform seulement).
@@ -28,7 +45,7 @@ export default function Header() {
       const d = y - lastY
       if (Math.abs(d) < DELTA) return
       lastY = y
-      const hide = d > 0 && y > h
+      const hide = d > 0 && y > h && !openRef.current // menu ouvert : header visible
       if (hide === hidden) return
       hidden = hide
       el.classList.toggle('is-hidden', hide)
@@ -42,6 +59,12 @@ export default function Header() {
   const go = (item) => (e) => {
     e.preventDefault()
     scrollToHeroProgress(item.p, item.id)
+  }
+
+  const goMenu = (item) => (e) => {
+    e.preventDefault()
+    setOpen(false)
+    scrollToSection(item)
   }
 
   const toCta = (e) => {
@@ -67,6 +90,29 @@ export default function Header() {
         <a className="btn-outline" href={`#${HEADER_CTA.id}`} onClick={toCta} ref={magnetic}>
           {HEADER_CTA.label}
         </a>
+        <button
+          type="button"
+          className="label menu-toggle"
+          aria-expanded={open}
+          aria-controls={menuId}
+          onClick={() => setOpen((o) => !o)}
+          ref={toggleRef}
+        >
+          {MENU_TOGGLE}
+        </button>
+      </nav>
+
+      {/* Menu mobile : toutes les sections. Affiché / masqué, sans animation */}
+      <nav className="mobile-menu" id={menuId} aria-label="Menu" hidden={!open}>
+        <ul>
+          {MENU.map((item) => (
+            <li key={item.id}>
+              <a className="label nav-link" href={`#${item.id}`} onClick={goMenu(item)}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </nav>
     </header>
   )

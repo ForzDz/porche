@@ -102,8 +102,8 @@ z-index : header 50, loader 100, le reste en `-1` local sous `isolation: isolate
 | Largeur | Comportement |
 |---|---|
 | ≥ 768 px | Vidéo scrubée, grille 5/7, cartes sticky, liens de nav visibles |
-| < 768 px | Séquence WebP sur canvas, une colonne, cartes en carrousel horizontal (scroll-snap), header = marque + bouton |
-| < 360 px | Marque et bouton du header resserrés |
+| < 768 px | Séquence WebP sur canvas, une colonne, cartes en carrousel horizontal (scroll-snap), header = marque + bouton + « Menu » (panneau de toutes les sections, affiché / masqué sans animation) |
+| < 360 px | Marque, bouton et « Menu » du header resserrés |
 | Portrait | Les blocs de texte du hero montent dans le plafond sombre |
 
 Largeurs de contrôle obligatoires : **1440 / 375 / 320**, plus le FPS.
