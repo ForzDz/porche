@@ -62,10 +62,10 @@ export const LINES = {
 
 // Gamme : versions fictives du concept. Jamais de prix réel.
 export const RANGE = {
-  title: 'Trois versions imaginées',
+  title: 'Gamme concept',
   intro: 'Trois versions imaginées pour ce concept. Aucune n’existe, aucune n’est à vendre.',
   price: 'Concept',
-  cta: 'Tester le formulaire', // mène au formulaire de démo : rien à configurer
+  cta: 'Tester la démo', // mène au formulaire de démo : rien à configurer
   cards: [
     {
       name: 'GT3 Nuit',
@@ -90,7 +90,7 @@ export const RANGE = {
 
 // Contact : formulaire de démo, n'envoie rien.
 export const CONTACT = {
-  title: 'Formulaire de démo',
+  title: 'Contact', // la démo est dite juste en dessous (intro)
   intro: 'Formulaire de démonstration : rien n’est envoyé, rien n’est enregistré.',
   fields: { name: 'Nom', email: 'E-mail', model: 'Version (pour l’exemple)', message: 'Message' },
   submit: 'Tester l’envoi',
