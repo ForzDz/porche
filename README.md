@@ -24,6 +24,11 @@ npm run preview   # sert le build
 npm run lint      # oxlint
 ```
 
+**Réglage de la lumière** : ouvrir `http://localhost:5173/?tune`. Un panneau (en bas à droite)
+règle en direct la lampe, la texture, le balayage des titres et la lueur de la LED ;
+« Copier les valeurs » donne un bloc `:root` à coller dans `src/index.css`. Sans `?tune`,
+le panneau n'existe pas (code chargé à la demande, `src/tune/`).
+
 ## Vérification
 
 Protocole de captures avant/après, pour tout changement censé être invisible

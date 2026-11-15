@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect } from 'react'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import StaticHero from './components/StaticHero.jsx'
@@ -10,6 +10,10 @@ import Loader from './components/Loader.jsx'
 import Lamp from './components/Lamp.jsx'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { ScrollTrigger, scrollToSection, startLenis, stopLenis } from './lib/scroll.js'
+
+// Panneau de réglage de la lumière : seulement avec ?tune, chargé à la demande
+const TunePanel = lazy(() => import('./tune/TunePanel.jsx'))
+const TUNE = new URLSearchParams(window.location.search).has('tune')
 
 export default function App() {
   const reduced = useMediaQuery(MQ_REDUCED)
@@ -53,6 +57,11 @@ export default function App() {
       </main>
       <Footer />
       <Lamp />
+      {TUNE && (
+        <Suspense fallback={null}>
+          <TunePanel />
+        </Suspense>
+      )}
     </>
   )
 }

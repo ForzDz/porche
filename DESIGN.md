@@ -158,4 +158,5 @@ Largeurs de contrôle obligatoires : **1440 / 375 / 320**, plus le FPS.
 - Avant tout changement visuel, lire ce fichier puis `src/index.css` (`:root`).
 - Un nouveau composant réutilise `.section`, `.section-title` + `.led`, `.label`, `.btn-outline` avant de créer du CSS.
 - Toute nouvelle valeur récurrente devient un token dans `:root`, documenté ici.
+- Réglages de la lumière (`--lamp-opacity`, `--lamp-radius`, `--texture-opacity`, `--sweep-opacity`, `--sweep-width`, `--led-glow`) : les ajuster à l'œil avec `?tune` (panneau `src/tune/`, chargé à la demande), puis coller le bloc copié dans `:root`.
 - Vérifier 1440 / 375 / 320 et le FPS ; comparer des captures avant/après pour tout refactor censé être invisible.

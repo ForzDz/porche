@@ -1,0 +1,57 @@
+/* ── Panneau ?tune (outil de réglage, jamais chargé sans ?tune) ── */
+.tune {
+  position: fixed;
+  right: var(--sp-4);
+  bottom: var(--sp-4);
+  z-index: 70; /* au-dessus du header (50) et de la lampe (40), sous le loader (100) */
+  width: min(18rem, calc(100vw - 2 * var(--sp-4)));
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--acier) 30%, transparent);
+  background: color-mix(in srgb, var(--carbone) 94%, transparent);
+  color: var(--chrome);
+  font: 400 var(--fs-small) / var(--lh-body) var(--font-text);
+}
+.tune-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-2);
+}
+.tune-row {
+  display: grid;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-2);
+  color: var(--acier);
+}
+.tune-row output {
+  float: right;
+  color: var(--chrome);
+  font-variant-numeric: tabular-nums;
+}
+.tune-row input {
+  width: 100%;
+  accent-color: var(--rouge);
+}
+.tune-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+.tune button {
+  min-height: 2.25rem;
+  padding: 0 var(--sp-3);
+  border: 1px solid color-mix(in srgb, var(--chrome) 45%, transparent);
+  background: transparent;
+  color: var(--chrome);
+  font: inherit;
+  cursor: pointer;
+}
+.tune button:hover {
+  border-color: var(--rouge);
+}
+.tune-note {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-micro);
+  color: var(--acier);
+}
