@@ -12,7 +12,11 @@
 
   --gutter: clamp(1rem, 4.5vw, 4.5rem);
   --header-h: clamp(3.5rem, 6vw, 4.5rem);
-  --lamp-size: 38rem; /* halo de la lampe sous le curseur */
+
+  /* ── Lumière (direction A) : valeurs réglables avec ?tune ── */
+  --lamp-opacity: 0.12; /*   intensité du halo de la lampe (--lueur) */
+  --lamp-radius: 420px; /*   rayon de la lampe */
+  --texture-opacity: 0.5; /* texture « carrosserie » révélée sous la lampe */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   --scrim: color-mix(in srgb, var(--nuit) 78%, transparent);

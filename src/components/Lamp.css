@@ -1,14 +1,49 @@
 /* ── Lampe sous le curseur (desktop, pointeur fin) ────────── */
 .lamp {
+  --lamp-size: calc(var(--lamp-radius) * 2);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 40; /* sous le header (50) */
   width: var(--lamp-size);
   height: var(--lamp-size);
-  margin: calc(var(--lamp-size) / -2) 0 0 calc(var(--lamp-size) / -2); /* centré sur le pointeur */
-  background: radial-gradient(closest-side, var(--carbone), transparent);
-  mix-blend-mode: lighten; /* éclaire le noir, jamais au-dessus du texte */
+  margin: calc(var(--lamp-radius) * -1) 0 0 calc(var(--lamp-radius) * -1); /* centrée sur le pointeur */
+  overflow: hidden;
+  mix-blend-mode: lighten; /* max par canal : seul ce qui est plus sombre que la lumière s'éclaire (jamais le texte) */
   opacity: 0;
   pointer-events: none;
+}
+
+/* Halo : cœur net, bord très doux */
+.lamp-halo {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    closest-side,
+    var(--lueur) 0%,
+    color-mix(in srgb, var(--lueur) 55%, transparent) 10%,
+    color-mix(in srgb, var(--lueur) 22%, transparent) 32%,
+    color-mix(in srgb, var(--lueur) 7%, transparent) 62%,
+    transparent 100%
+  );
+  opacity: var(--lamp-opacity);
+}
+
+/* Texture « carrosserie » : fines lignes, visibles seulement sous la lampe.
+   Masque radial STATIQUE (jamais animé) ; les lignes sont recalées en transform. */
+.lamp-texture {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.55) 45%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.55) 45%, transparent 100%);
+  opacity: var(--texture-opacity);
+}
+.lamp-lines {
+  position: absolute;
+  inset: -4px 0 0; /* + un pas : place pour le recalage (0 à -4 px) */
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    color-mix(in srgb, var(--lueur) 30%, transparent) 3px 4px
+  );
 }
