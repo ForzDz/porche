@@ -5,6 +5,7 @@
  *   npm run record -- --ref HEAD~1 --name x un commit
  *   --duration 25                           durée totale en s (1 s d'arrêt au début et à la fin)
  *   --no-pointer                            pas de pointeur qui se promène (sinon : lampe visible)
+ *   --pointer-speed 0.35                    vitesse du pointeur (1 = défaut ; < 1 = lent, la lampe s'attarde)
  *
  *   --slow 4                                ralenti de capture (défaut 4, 1 = temps réel)
  *
@@ -80,8 +81,9 @@ try {
     const t0 = Date.now()
     while (walking) {
       const t = (Date.now() - t0) / 1000 / SLOW // temps de page
-      const x = Math.round(W / 2 + W * 0.3 * Math.sin(t * 0.7))
-      const y = Math.round(H / 2 + H * 0.28 * Math.sin(t * 1.1))
+      const k = t * Number(opt['pointer-speed'] ?? 1)
+      const x = Math.round(W / 2 + W * 0.3 * Math.sin(k * 0.7))
+      const y = Math.round(H / 2 + H * 0.28 * Math.sin(k * 1.1))
       await page.s('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }).catch(() => {})
       await sleep(40 * SLOW)
     }
