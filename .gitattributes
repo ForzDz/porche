@@ -6,3 +6,7 @@
 *.webp binary
 *.jpg binary
 *.png binary
+
+# Scripts batch Windows : CRLF obligatoire
+*.cmd text eol=crlf
+*.bat text eol=crlf
