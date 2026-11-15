@@ -65,7 +65,18 @@ Liens du header → position dans le pin : Design 24 %, Performance 50 %, Habita
 - Un prompt = un changement. Commit après chaque étape qui marche.
 - `npm run lint` + `npm run build` doivent passer avant chaque commit.
 - Vérifier 1440 / 375 / 320 px et le FPS après chaque changement.
-- Refactor censé être invisible : comparer des captures avant/après.
+- Refactor censé être invisible : comparer des captures avant/après
+  (`npm run shots` / `npm run compare`, voir README « Vérification »).
+- En cas de conflit entre un skill et DESIGN.md / CLAUDE.md, DESIGN.md et CLAUDE.md gagnent.
+
+## Outils agent (scope projet)
+- **Impeccable** (`.claude/skills/impeccable`, v4.9.1, sans hooks) : utilisé pour
+  `critique` et `audit`. NE JAMAIS lancer `/impeccable document`, ni laisser
+  `init`, `new-work` ou un sous-agent `impeccable-documenter` écrire ou remplacer
+  `DESIGN.md` : toute modification de DESIGN.md est faite à la main, sur demande.
+  Pas de mode `live` (il peut lancer un agent sans permissions).
+- **Awwwards MCP** (`.mcp.json`, version figée) : inspiration personnelle
+  uniquement, pas de scraping massif, rien de republié.
 
 ## Docs
 - `DESIGN.md` : direction artistique (fait foi).
