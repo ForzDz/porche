@@ -203,6 +203,7 @@
 .stat {
   display: flex;
   flex-direction: column-reverse;
+  justify-content: flex-end; /* chiffres alignés en haut, même si un label passe sur 2 lignes */
   margin: 0;
 }
 .stat-value {
@@ -278,7 +279,7 @@
   font-size: var(--fs-micro);
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--acier);
+  color: var(--chrome); /* acier : illisible sur le sol mouillé */
   padding-left: 0.32em; /* compense le letter-spacing final */
 }
 .hero-cue-track {
@@ -286,7 +287,7 @@
   width: 1px;
   height: 2.75rem;
   overflow: hidden;
-  background: color-mix(in srgb, var(--acier) 30%, transparent);
+  background: color-mix(in srgb, var(--chrome) 45%, transparent);
 }
 .hero-cue-dot {
   position: absolute;
@@ -364,8 +365,7 @@
     vertical-align: baseline;
   }
   .stat-label {
-    font-size: var(--fs-stat-label-sm);
-    letter-spacing: 0.16em;
+    letter-spacing: 0.16em; /* taille : --fs-micro, comme sur desktop */
   }
   .blk-driver .t-display {
     font-size: var(--fs-hero-driver-sm);

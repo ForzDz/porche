@@ -52,7 +52,7 @@ Règles : le rouge ne remplit jamais une grande surface (exception assumée : le
 | `--fs-micro` | `0.6875rem` | 11 | Petites mentions (« Chiffres concept », « Scroll ») |
 
 Décoratifs : `--fs-marquee` (bandeau), `--fs-giant` (911 du footer).
-Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver-sm`, `--fs-stat-sm`, `--fs-stat-label-sm`.
+Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver-sm`, `--fs-stat-sm` (les labels des chiffres restent en `--fs-micro`, 11 px minimum).
 
 **Interlignage** : `--lh-tight` 1 (chiffres, cartes) · titres de section 1.02 · `--lh-body` 1.55 · `--lh-relaxed` 1.7 (paragraphes longs).
 **Approche** : `--tracking-display` −0.01em (titres) · `--tracking-text` 0.04em (sous-titres, légendes) · `--tracking-label` 0.2em (capitales).

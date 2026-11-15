@@ -54,7 +54,7 @@
 .ft-legal {
   margin: 0;
   font-size: var(--fs-label);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-text);
   color: var(--acier);
 }
 

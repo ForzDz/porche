@@ -33,7 +33,6 @@
   --fs-hero-title-sm: clamp(2.25rem, 11vw, 3.25rem);
   --fs-hero-driver-sm: clamp(2rem, 10vw, 2.75rem);
   --fs-stat-sm: clamp(1.5rem, 7.4vw, 2.25rem);
-  --fs-stat-label-sm: 0.5625rem;
 
   /* ── Espacements verticaux (rythme, suit la hauteur d'écran) ── */
   --space-section: clamp(4rem, 10vh, 6rem); /* padding des sections */
