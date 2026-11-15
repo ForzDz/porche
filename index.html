@@ -13,7 +13,8 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Hanken+Grotesk:wght@300;400;500&display=swap"
     />
-    <link rel="preload" as="image" href="/intro-dark.jpg" fetchpriority="high" />
+    <!-- intro-dark.jpg ne sert qu'à la version animée : rien à précharger en mouvement réduit -->
+    <link rel="preload" as="image" href="/intro-dark.jpg" fetchpriority="high" media="(prefers-reduced-motion: no-preference)" />
   </head>
   <body>
     <div id="root"></div>
