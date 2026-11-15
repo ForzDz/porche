@@ -1,9 +1,9 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { gsap, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { LINES } from '../content.js'
 import LightText from './LightText.jsx'
-import { useTitleReveal } from '../lib/light.js'
+import { REPLAY_EVENT, useTitleReveal } from '../lib/light.js'
 import './Lines.css'
 
 /*
@@ -26,6 +26,13 @@ export default function Lines() {
   const reduced = useMediaQuery(MQ_REDUCED)
   const rootRef = useRef(null)
   useTitleReveal(rootRef, { before: ledFirst, start: 'top 75%' })
+
+  // ?tune : « Rejouer les balayages » rallume aussi la LED (et sa lueur)
+  useEffect(() => {
+    const replay = () => ledFirst(gsap.timeline(), rootRef.current)
+    window.addEventListener(REPLAY_EVENT, replay)
+    return () => window.removeEventListener(REPLAY_EVENT, replay)
+  }, [])
 
   useLayoutEffect(() => {
     if (reduced) return

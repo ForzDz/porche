@@ -11,6 +11,25 @@
   max-width: none;
   margin: 0;
 }
+/* Lueur rouge autour du filet : dégradé PRÉ-RENDU (pas de filter), il suit le
+   scaleX du filet ; intensité --led-glow */
+.lines-led::before {
+  content: '';
+  position: absolute;
+  inset: -2.5rem 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--rouge) 10%, transparent) 25%,
+    color-mix(in srgb, var(--rouge) 30%, transparent) 42%,
+    color-mix(in srgb, var(--rouge) 55%, transparent) 50%,
+    color-mix(in srgb, var(--rouge) 30%, transparent) 58%,
+    color-mix(in srgb, var(--rouge) 10%, transparent) 75%,
+    transparent
+  );
+  opacity: var(--led-glow);
+  pointer-events: none;
+}
 
 /* Texte : collé pendant que les images défilent (CSS sticky, pas de pin) */
 .lines-text {

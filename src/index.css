@@ -19,6 +19,7 @@
   --texture-opacity: 0.5; /* texture « carrosserie » révélée sous la lampe */
   --sweep-opacity: 0.9; /*   intensité du reflet qui balaie les titres */
   --sweep-width: 3.5em; /*   largeur de la bande de lumière (em du titre) */
+  --led-glow: 0.7; /*        lueur rouge autour de la LED pleine largeur (Lignes) */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   --scrim: color-mix(in srgb, var(--nuit) 78%, transparent);
