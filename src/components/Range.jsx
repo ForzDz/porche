@@ -1,7 +1,6 @@
 import { Fragment, useLayoutEffect, useRef } from 'react'
 import { gsap, scrollToSection, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from '../lib/media.js'
-import { useMagnetic } from '../lib/magnetic.js'
 import { RANGE } from '../content.js'
 import LightText from './LightText.jsx'
 import { useTitleReveal } from '../lib/light.js'
@@ -19,7 +18,6 @@ const SCALE_TO = 0.92
 const DARK_TO = 0.45
 
 export default function Range() {
-  const magnetic = useMagnetic()
   const isMobile = useMediaQuery(MQ_MOBILE)
   const reduced = useMediaQuery(MQ_REDUCED)
   const rootRef = useRef(null)
@@ -91,7 +89,7 @@ export default function Range() {
                     <p className="card-price">
                       <span className="card-price-label">Prix</span> {RANGE.price}
                     </p>
-                    <button type="button" className="btn-outline" onClick={toContact} ref={magnetic}>
+                    <button type="button" className="btn-outline" onClick={toContact}>
                       {RANGE.cta}
                       <span className="btn-arrow" aria-hidden="true">
                         ↓

@@ -1,6 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { HEADER_CTA, MENU, MENU_TOGGLE, NAV } from '../content.js'
-import { useMagnetic } from '../lib/magnetic.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { onLenisScroll, scrollToHeroProgress, scrollToSection, scrollToY } from '../lib/scroll.js'
 import './Header.css'
@@ -8,7 +7,6 @@ import './Header.css'
 const DELTA = 6 // px de scroll ignorés (évite le clignotement)
 
 export default function Header() {
-  const magnetic = useMagnetic()
   const reduced = useMediaQuery(MQ_REDUCED)
   const ref = useRef(null)
   const toggleRef = useRef(null)
@@ -87,7 +85,7 @@ export default function Header() {
             </li>
           ))}
         </ul>
-        <a className="btn-outline" href={`#${HEADER_CTA.id}`} onClick={toCta} ref={magnetic}>
+        <a className="btn-outline" href={`#${HEADER_CTA.id}`} onClick={toCta}>
           {HEADER_CTA.label}
         </a>
         <button

@@ -1,6 +1,5 @@
 import { useId, useRef, useState } from 'react'
 import { CONTACT, RANGE } from '../content.js'
-import { useMagnetic } from '../lib/magnetic.js'
 import LightText from './LightText.jsx'
 import { useTitleReveal } from '../lib/light.js'
 import './Contact.css'
@@ -11,7 +10,6 @@ import './Contact.css'
  * ensuite on affiche seulement le message, rien ne quitte la page.
  */
 export default function Contact() {
-  const magnetic = useMagnetic()
   const uid = useId()
   const [sent, setSent] = useState(false)
   const rootRef = useRef(null)
@@ -74,7 +72,7 @@ export default function Contact() {
         )}
 
         <div className="contact-actions">
-          <button type="submit" className="btn-outline" ref={magnetic}>
+          <button type="submit" className="btn-outline">
             {CONTACT.submit}
             <span className="btn-arrow" aria-hidden="true">
               →

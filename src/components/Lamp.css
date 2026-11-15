@@ -1,0 +1,14 @@
+/* ── Lampe sous le curseur (desktop, pointeur fin) ────────── */
+.lamp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40; /* sous le header (50) */
+  width: var(--lamp-size);
+  height: var(--lamp-size);
+  margin: calc(var(--lamp-size) / -2) 0 0 calc(var(--lamp-size) / -2); /* centré sur le pointeur */
+  background: radial-gradient(closest-side, var(--carbone), transparent);
+  mix-blend-mode: lighten; /* éclaire le noir, jamais au-dessus du texte */
+  opacity: 0;
+  pointer-events: none;
+}

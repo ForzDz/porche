@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap, willChangeWhileActive } from '../lib/scroll.js'
-import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
-import { useMagnetic } from '../lib/magnetic.js'
+import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import LightText from './LightText.jsx'
 import { lightReveal, setLit } from '../lib/light.js'
@@ -59,7 +58,6 @@ const PHASES = [
 ]
 
 export default function Hero({ onDiscover }) {
-  const magnetic = useMagnetic()
   const isMobile = useMediaQuery(MQ_MOBILE)
   const stageRef = useRef(null)
   const videoRef = useRef(null)
@@ -72,7 +70,6 @@ export default function Hero({ onDiscover }) {
     const driver = isMobile
       ? createFrameDriver(canvasRef.current, { onFirstFrame: () => (hidePoster(), markHeroReady()) })
       : createVideoDriver(videoRef.current, { onReady: hidePoster, onMeta: markHeroReady })
-    let removePointer = () => {}
 
     const ctx = gsap.context((self) => {
       const q = gsap.utils.selector(stage)
@@ -127,7 +124,9 @@ export default function Hero({ onDiscover }) {
           .set(blk, { autoAlpha: 1 }, 0)
         // hors comptage, les chiffres affichent leur valeur finale (même après un rembobinage)
         if (!counting && nums.length) tl.call(() => nums.forEach((num, i) => (num.textContent = STATS[i].value)), null, 0)
-        if (sweep) {
+        if (!titles.length) {
+          // bloc sans titre (chiffres) : rien à éclairer
+        } else if (sweep) {
           tl.set(titles, { opacity: 1 }, 0)
           titles.forEach((t) => tl.add(lightReveal(t), 0))
         } else {
@@ -286,30 +285,10 @@ export default function Hero({ onDiscover }) {
         .to(q('.scrim-top'), { autoAlpha: 1, duration: 0.04 }, 0.36)
         .to(q('.scrim-top'), { autoAlpha: 0, duration: 0.04 }, 0.61)
         .to(q('.scrim-bottom'), { autoAlpha: 1, duration: 0.05 }, 0.73)
-
-      /* ── Parallaxe curseur : calque texte uniquement, jamais le média ── */
-      if (window.matchMedia(MQ_FINE_POINTER).matches) {
-        const layers = q('[data-depth]').map((el) => ({
-          depth: parseFloat(el.dataset.depth),
-          x: gsap.quickTo(el, 'x', { duration: 0.9, ease: 'power3.out' }),
-          y: gsap.quickTo(el, 'y', { duration: 0.9, ease: 'power3.out' }),
-        }))
-        const onMove = (e) => {
-          const nx = e.clientX / window.innerWidth - 0.5
-          const ny = e.clientY / window.innerHeight - 0.5
-          for (const l of layers) {
-            l.x(nx * -14 * l.depth)
-            l.y(ny * -8 * l.depth)
-          }
-        }
-        window.addEventListener('pointermove', onMove, { passive: true })
-        removePointer = () => window.removeEventListener('pointermove', onMove)
-      }
     }, stage)
 
     // ScrollTrigger.refresh() : centralisé dans App.jsx
     return () => {
-      removePointer()
       ctx.revert()
       driver.destroy()
     }
@@ -345,9 +324,9 @@ export default function Hero({ onDiscover }) {
           <div className="scrim scrim-bottom" />
         </div>
 
-        {/* Texte : toujours sur les zones sombres. data-depth = parallaxe curseur */}
+        {/* Texte : toujours sur les zones sombres */}
         <div className="hero-copy">
-          <div className="blk blk-intro" id="design" data-depth="1">
+          <div className="blk blk-intro" id="design">
             <h1 className="t-display">
               <LightText text={INTRO.title} />
               <span className="led" />
@@ -355,7 +334,7 @@ export default function Hero({ onDiscover }) {
             <p className="t-sub rise">{INTRO.sub}</p>
           </div>
 
-          <div className="blk blk-stats" id="performance" data-depth="0.8">
+          <div className="blk blk-stats" id="performance">
             <h2 className="sr-only">Performances</h2>
             <dl className="stats">
               {STATS.map((s) => (
@@ -378,15 +357,14 @@ export default function Hero({ onDiscover }) {
             <p className="stats-note rise">{STATS_NOTE}</p>
           </div>
 
-          <div className="blk blk-driver" id="habitacle" data-depth="0.7">
+          <div className="blk blk-driver" id="habitacle">
             <span className="driver-halo" aria-hidden="true" />
             <h2 className="t-display t-center">
               <LightText text={DRIVER.title} />
               <span className="led led-center" />
             </h2>
-            {/* .rise anime y sur l'enveloppe : le bouton garde x/y pour l'effet magnétique */}
             <span className="rise">
-              <button type="button" className="btn-outline" onClick={onDiscover} ref={magnetic}>
+              <button type="button" className="btn-outline" onClick={onDiscover}>
                 {DRIVER.cta}
                 <span className="btn-arrow" aria-hidden="true">
                   ↓
