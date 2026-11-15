@@ -37,6 +37,9 @@ npm run shots -- --name apres              # captures de l'arbre de travail → 
 npm run compare -- .shots/avant .shots/apres
 npm run shots:reduced -- --name apres      # idem avec prefers-reduced-motion → .shots/apres-reduced/
 npm run fps                                # FPS pendant un scroll molette (ou --ref <commit>)
+npm run fps -- --zone sections             # idem après le hero, pointeur en mouvement
+npm run compare:html -- .shots/avant .shots/apres --out .shots/compare.html
+npm run record -- --name avant             # vidéo de scroll haut → bas → .shots/avant.mp4
 ```
 
 - `shots` : build + preview, Chrome headless, attend la fin du loader, capture
@@ -53,6 +56,12 @@ npm run fps                                # FPS pendant un scroll molette (ou -
   s'il y a une différence.
 - `fps` : chiffres utiles pour **comparer** deux versions dans les mêmes conditions,
   pas comme FPS absolu (headless, pas de vrai écran).
+- `compare:html` : page avant | après par position (nom lisible, SSIM et image de
+  différence si `compare` a tourné avant ; `--video a.mp4,b.mp4` pour les joindre).
+- `record` : 1440×900, ~25 s (`--duration`), scroll régulier, pointeur qui se promène
+  (`--no-pointer` pour l'enlever), mp4 H.264. Capturé au ralenti ×4 (horloge de la page
+  ralentie, voir l'en-tête du script) puis remis en temps réel : ~40 images/s effectives.
+  Côte à côte : `ffmpeg -i .shots/avant.mp4 -i .shots/apres.mp4 -filter_complex hstack -c:v libx264 -pix_fmt yuv420p .shots/avant-apres.mp4`.
 
 Les captures vont dans `.shots/` (ignoré par git).
 

@@ -11,6 +11,8 @@
     "shots": "node scripts/shots.mjs",
     "shots:reduced": "node scripts/shots.mjs --reduced",
     "compare": "node scripts/compare.mjs",
+    "compare:html": "node scripts/compare-html.mjs",
+    "record": "node scripts/record.mjs",
     "fps": "node scripts/fps.mjs"
   },
   "dependencies": {

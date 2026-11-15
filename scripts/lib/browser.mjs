@@ -35,7 +35,7 @@ export function findChrome() {
 const DETERMINISTIC = ['--disable-gpu', '--disable-checker-imaging', '--disable-partial-raster', '--disable-lcd-text', '--font-render-hinting=none', '--force-color-profile=srgb']
 
 /** Lance Chrome et renvoie { send, newPage, close }. */
-export async function launchChrome({ deterministic = false } = {}) {
+export async function launchChrome({ deterministic = false, extraFlags = [] } = {}) {
   const profile = mkdtempSync(join(tmpdir(), 'shots-chrome-'))
   const proc = spawn(
     findChrome(),
@@ -48,6 +48,7 @@ export async function launchChrome({ deterministic = false } = {}) {
       '--hide-scrollbars',
       '--mute-audio',
       ...(deterministic ? DETERMINISTIC : []),
+      ...extraFlags,
       'about:blank',
     ],
     { stdio: 'ignore' },
@@ -79,16 +80,20 @@ export async function launchChrome({ deterministic = false } = {}) {
     })
 
   /**
-   * Nouvel onglet émulé. Renvoie { s, ev, screenshot, logs, close }.
-   * mask : cache les éléments non déterministes (média scrubé, bandeau, point du cue).
+   * Nouvel onglet émulé. Renvoie { s, ev, on, screenshot, logs, close }.
+   * on(fn) : reçoit les événements CDP de cet onglet (ex. Page.screencastFrame).
+   * mask : cache les éléments non déterministes (média scrubé, bandeau, cue qui pulse, lampe).
    */
   async function newPage({ url, width, height, mobile, reduced = false, mask = true }) {
     const { targetId } = await send('Target.createTarget', { url: 'about:blank' })
     const { sessionId } = await send('Target.attachToTarget', { targetId, flatten: true })
     const s = (m, p) => send(m, p, sessionId)
     const logs = []
+    const subs = new Set()
+    const on = (fn) => (subs.add(fn), () => subs.delete(fn))
     const onEvt = (m) => {
       if (m.sessionId !== sessionId) return
+      subs.forEach((fn) => fn(m))
       if (m.method === 'Runtime.exceptionThrown') logs.push(`exception: ${m.params.exceptionDetails.exception?.description ?? m.params.exceptionDetails.text}`)
       if (m.method === 'Runtime.consoleAPICalled' && ['error', 'warning'].includes(m.params.type))
         logs.push(`${m.params.type}: ${m.params.args.map((a) => a.value ?? a.description).join(' ')}`)
@@ -105,7 +110,7 @@ export async function launchChrome({ deterministic = false } = {}) {
       await s('Page.addScriptToEvaluateOnNewDocument', {
         source: `addEventListener('DOMContentLoaded', () => {
           const st = document.createElement('style')
-          st.textContent = '.hero-media, .marquee-track, .hero-cue-dot { visibility: hidden !important }'
+          st.textContent = '.hero-media, .marquee-track, .hero-cue-dot, .hero-cue-led, .lamp { visibility: hidden !important }'
           document.head.append(st)
         })`,
       })
@@ -120,7 +125,7 @@ export async function launchChrome({ deterministic = false } = {}) {
       listeners.delete(onEvt)
       await send('Target.closeTarget', { targetId })
     }
-    return { s, ev, screenshot, logs, close }
+    return { s, ev, on, screenshot, logs, close }
   }
 
   const close = async () => {
