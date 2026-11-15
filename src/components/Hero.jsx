@@ -18,6 +18,8 @@ import './Hero.css'
  */
 const INTRO_END = 0.1
 const PIN_LENGTH = 2.75 // en hauteurs d'écran (5 avant : trop long à parcourir)
+// À l'arrêt du scroll, un comptage en cours finit en 0,3 s au plus (= --dur-fast)
+const COUNT_FINISH = 0.3
 
 /*
  * Progression du scroll (0-1) → position dans le média (0-1), par segments,
@@ -190,6 +192,19 @@ export default function Hero({ onDiscover }) {
         play(blk, `${phase.sel}:out`, () => buildLeave(blk))
       })
 
+      /*
+       * Compteurs : à l'arrêt du scroll, les chiffres doivent afficher leur
+       * valeur finale. Si l'entrée qui compte tourne encore (vers l'avant),
+       * on l'accélère pour qu'elle finisse en COUNT_FINISH au plus.
+       */
+      // appelé par onScrubComplete : la position scrubée s'est posée = le scroll est arrêté
+      const finishCount = () => {
+        const tl = cache.get('.blk-stats:in:count')
+        if (!tl?.isActive() || tl.reversed()) return
+        const left = (tl.duration() - tl.time()) / tl.timeScale()
+        if (left > COUNT_FINISH) tl.timeScale((tl.duration() - tl.time()) / COUNT_FINISH)
+      }
+
       const active = new Set()
       const syncPhases = (p) => {
         for (const phase of PHASES) {
@@ -216,6 +231,7 @@ export default function Hero({ onDiscover }) {
           end: () => `+=${window.innerHeight * PIN_LENGTH}`,
           pin: true,
           scrub: 0.3,
+          onScrubComplete: finishCount,
           invalidateOnRefresh: true,
           // calques compositeur seulement pendant le pin
           onToggle: willChangeWhileActive(q('.hero-lit, .hero-media'), 'opacity'),
