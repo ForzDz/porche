@@ -1,6 +1,6 @@
 // Textes du hero — carte du texte de CLAUDE.md.
 export const INTRO = {
-  title: 'Une GT3 de nuit',
+  title: 'Née la nuit',
   sub: 'La 911 GT3, réimaginée.',
 }
 
@@ -48,7 +48,7 @@ export const MARQUEE = '911 GT3 · CONCEPT · ÉTUDE DE STYLE · '
 
 // Section design (après le bandeau). Ton concept : intentions, aucune donnée réelle.
 export const LINES = {
-  title: 'Chaque ligne guide l’air',
+  title: 'L’air d’abord',
   body: [
     "Dans ce concept, aucun trait n'est là pour décorer. L'aileron, la chute du pavillon, les ouïes derrière la portière : chaque ligne a été imaginée pour guider l'air avant de guider le regard.",
     "C'est une étude de style, pas une fiche technique. Une GT3 rêvée pour la nuit : carrosserie noire, détails rouges, lumière rasante. Ce que vous voyez relève de l'intention, pas de l'homologation.",

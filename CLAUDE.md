@@ -32,7 +32,7 @@ durée en dur ailleurs.
 | 1 | Header | `Header.jsx` | — | Fixe, se cache en descendant. Liens Design / Performance / Habitacle + bouton « Découvrir » (→ `#lignes`). Mobile : bouton « Menu » → toutes les sections |
 | 2 | Hero | `Hero.jsx` (`StaticHero.jsx` si mouvement réduit) | `#design` `#performance` `#habitacle` | Pin de 2,75 écrans, vidéo scrubée, carte du texte ci-dessous |
 | 3 | Bandeau | `Marquee.jsx` | — | Texte défilant |
-| 4 | Lignes | `Lines.jsx` | `#lignes` | « Chaque ligne guide l’air » : texte sticky + 3 images révélées |
+| 4 | Lignes | `Lines.jsx` | `#lignes` | « L’air d’abord » : texte sticky + 3 images révélées |
 | 5 | Gamme | `Range.jsx` | `#gamme` | 3 versions fictives (cartes sticky desktop, carrousel mobile). Prix = « Concept » |
 | 6 | Contact | `Contact.jsx` | `#contact` | Formulaire de démo, n'envoie rien. Libellés honnêtes (« Tester l’envoi ») |
 | 7 | Footer | `Footer.jsx` | `#concept` | Liens + mention légale |
@@ -47,7 +47,7 @@ Progression du pin (0-1). Fenêtres exactes dans `PHASES` (`Hero.jsx`).
 | Scroll | Image | Texte |
 |---|---|---|
 | 0-10 % | Le showroom s'allume | Rien, seulement l'indicateur de scroll |
-| 12-31 % | Orbite de l'avant au profil | GAUCHE : « Une GT3 de nuit » + « La 911 GT3, réimaginée. » |
+| 12-31 % | Orbite de l'avant au profil | GAUCHE : « Née la nuit » + « La 911 GT3, réimaginée. » |
 | 37-60 % | Travelling le long du profil | HAUT GAUCHE : 3 chiffres « 510 ch », « 318 km/h », « 3,4 s 0-100 » + mention « chiffres concept » |
 | 65-76 % | La portière s'ouvre | Rien (le texte attend d'être dans l'habitacle) |
 | 76-100 % | L'habitacle, le volant | CENTRE BAS : « Tout part du volant » + bouton « Découvrir » |
