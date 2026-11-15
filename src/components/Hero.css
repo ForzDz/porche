@@ -96,47 +96,21 @@
 }
 
 /* Calques compositeur seulement pendant une entrée/sortie de texte (classe posée par le JS) */
-.blk.is-anim :is(.bt-ch, .bt-line, .rise, .led) {
+.blk.is-anim :is(.t-display, .rise, .led) {
   will-change: transform, opacity;
 }
 
-/* ── Flou → net : deux copies, seule l'opacité est animée ── */
-.bt-word {
-  display: inline-block;
-  white-space: nowrap;
-}
-.bt-ch,
-.bt-line {
+/* Compteur : le fantôme (invisible) réserve la largeur de la valeur finale */
+.stat-num {
   position: relative;
-  display: inline-block;
-  transform-origin: 50% 80%;
+  font-variant-numeric: tabular-nums lining-nums;
 }
-.bt-line {
-  white-space: nowrap;
-}
-.bt-ghost {
+.stat-ghost {
   visibility: hidden;
 }
-.bt-line .bt-sharp,
-.bt-blur {
+.stat-count {
   position: absolute;
-  inset: 0;
-}
-/*
- * Copie floue = texte transparent + text-shadow flou.
- * Pas de `filter: blur` : sur un calque compositeur, un filtre est
- * recalculé à chaque image (mesuré : FPS ÷ 2 en CPU ×4). L'ombre, elle,
- * est cuite dans la rastérisation du calque, une seule fois.
- */
-.bt-blur {
-  --bt-color: var(--chrome);
-  opacity: 0;
-  color: transparent;
-  text-shadow: 0 0 max(5px, 0.16em) var(--bt-color);
-  pointer-events: none;
-}
-.stat-num {
-  font-variant-numeric: tabular-nums lining-nums;
+  inset: 0 auto auto 0;
 }
 
 /* Halo radial sombre derrière « Tout part du volant » */

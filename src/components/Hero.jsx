@@ -3,7 +3,8 @@ import { gsap, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { useMagnetic } from '../lib/magnetic.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
-import { BlurLetters, BlurLine } from './BlurText.jsx'
+import LightText from './LightText.jsx'
+import { lightReveal, setLit } from '../lib/light.js'
 import { CUE, DRIVER, INTRO, STATS, STATS_NOTE, formatStat } from '../content.js'
 import { markHeroReady } from '../lib/ready.js'
 import './Hero.css'
@@ -92,6 +93,7 @@ export default function Hero({ onDiscover }) {
       const cache = new Map()
       const running = new Map()
       let countersDone = false
+      const swept = new Set()
       /*
        * Ajoute un fromTo seulement si la cible existe : chaque bloc n'a pas
        * tous les éléments (pas de flou dans les chiffres, pas de .rise ni de
@@ -104,15 +106,16 @@ export default function Hero({ onDiscover }) {
       const animOn = (blk) => () => blk.classList.add('is-anim')
       const animOff = (blk) => () => blk.classList.remove('is-anim')
 
-      const buildEnter = (blk, counting) => {
-        const sharp = blk.querySelectorAll('.bt-sharp')
-        const blur = blk.querySelectorAll('.bt-blur') // seulement les grands titres
-        const units = blk.querySelectorAll('.bt-ch, .bt-line')
+      /*
+       * Entrée d'un bloc. Le titre (.t-display) est balayé par la lumière au
+       * premier passage seulement (sweep) ; ensuite il revient en fondu, déjà éclairé.
+       */
+      const buildEnter = (blk, counting, sweep) => {
+        const titles = blk.querySelectorAll('.t-display')
         const rest = blk.querySelectorAll('.rise')
         const leds = blk.querySelectorAll('.led')
         const halo = blk.querySelectorAll('.driver-halo')
-        const each = 0.032 // décalage entre deux lettres
-        const nums = blk.querySelectorAll('.stat-value .bt-sharp')
+        const nums = blk.querySelectorAll('.stat-count')
         const tl = gsap
           .timeline({
             paused: true,
@@ -124,20 +127,21 @@ export default function Hero({ onDiscover }) {
           .set(blk, { autoAlpha: 1 }, 0)
         // hors comptage, les chiffres affichent leur valeur finale (même après un rembobinage)
         if (!counting && nums.length) tl.call(() => nums.forEach((num, i) => (num.textContent = STATS[i].value)), null, 0)
-        // la lettre arrive (floue si grand titre), légèrement basse et grande…
-        fromTo(tl, units, { y: '0.22em', scale: 1.06 }, { y: 0, scale: 1, duration: 0.8, stagger: each, ease: 'expo.out' }, 0)
-        fromTo(tl, blur, { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: each, ease: 'power1.out' }, 0)
-        // …puis se met au point : la copie nette remplace la floue
-        fromTo(tl, sharp, { opacity: 0 }, { opacity: 1, duration: 0.38, stagger: each, ease: 'power2.out' }, blur.length ? 0.2 : 0)
-        fromTo(tl, blur, { opacity: 1 }, { opacity: 0, duration: 0.42, stagger: each, ease: 'power1.in' }, 0.26)
-        fromTo(tl, rest, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, 0.25)
-        fromTo(tl, leds, { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: 'power3.inOut' }, 0.3)
+        if (sweep) {
+          tl.set(titles, { opacity: 1 }, 0)
+          titles.forEach((t) => tl.add(lightReveal(t), 0))
+        } else {
+          titles.forEach((t) => setLit(tl, t))
+          fromTo(tl, titles, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
+        }
+        const after = sweep && titles.length ? 0.6 : 0.25 // le reste suit le phare
+        fromTo(tl, rest, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, after)
+        fromTo(tl, leds, { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: 'power3.inOut' }, after + 0.05)
         fromTo(tl, halo, { opacity: 0 }, { opacity: 1, duration: 0.9, ease: 'power2.out' }, 0)
         if (counting) {
           tl.call(() => nums.forEach((num, i) => (num.textContent = formatStat(0, STATS[i].decimals))), null, 0)
-          blk.querySelectorAll('.stat-value .bt-line').forEach((line, i) => {
+          nums.forEach((num, i) => {
             const { to, decimals } = STATS[i]
-            const num = line.querySelector('.bt-sharp')
             const n = { v: 0 }
             const write = () => (num.textContent = formatStat(n.v, decimals))
             tl.fromTo(n, { v: 0 }, { v: to, duration: 1.5, ease: 'power3.out', onUpdate: write }, 0.05 + i * 0.12)
@@ -146,19 +150,14 @@ export default function Hero({ onDiscover }) {
         return tl
       }
 
+      // Sortie : la lumière s'éteint (opacité), la LED se replie
       const buildLeave = (blk) => {
-        const sharp = blk.querySelectorAll('.bt-sharp')
-        const blur = blk.querySelectorAll('.bt-blur')
+        const titles = blk.querySelectorAll('.t-display')
         const rest = blk.querySelectorAll('.rise')
         const leds = blk.querySelectorAll('.led')
         const halo = blk.querySelectorAll('.driver-halo')
-        const each = 0.012
         const tl = gsap.timeline({ paused: true, defaults: { immediateRender: false }, onStart: animOn(blk), onComplete: animOff(blk) })
-        // la copie nette s'efface pendant que la floue passe brièvement : flou doux
-        fromTo(tl, sharp, { opacity: 1 }, { opacity: 0, duration: 0.3, stagger: each, ease: 'power1.in' }, 0)
-        // deux tweens simples plutôt que keyframes (timeline interne ré-initialisée)
-        fromTo(tl, blur, { opacity: 0 }, { opacity: 0.65, duration: 0.25, stagger: each, ease: 'none' }, 0)
-        fromTo(tl, blur, { opacity: 0.65 }, { opacity: 0, duration: 0.25, stagger: each, ease: 'none' }, 0.25)
+        fromTo(tl, titles, { opacity: 1 }, { opacity: 0, duration: 0.35, ease: 'power1.in' }, 0)
         fromTo(tl, rest, { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.35, stagger: 0.03, ease: 'power1.in' }, 0)
         fromTo(tl, leds, { scaleX: 1 }, { scaleX: 0, duration: 0.35, ease: 'power2.in' }, 0)
         fromTo(tl, halo, { opacity: 1 }, { opacity: 0, duration: 0.4 }, 0)
@@ -178,7 +177,11 @@ export default function Hero({ onDiscover }) {
         // les compteurs ne tournent qu'au premier passage
         const counting = phase.counters && !countersDone
         if (counting) countersDone = true
-        play(blk, `${phase.sel}:in${counting ? ':count' : ''}`, () => buildEnter(blk, counting))
+        // balayage de lumière : une seule fois par titre
+        const sweep = !swept.has(blk)
+        swept.add(blk)
+        const key = `${phase.sel}:in${counting ? ':count' : ''}${sweep ? ':sweep' : ''}`
+        play(blk, key, () => buildEnter(blk, counting, sweep))
       })
 
       self.add('leave', (phase) => {
@@ -199,7 +202,7 @@ export default function Hero({ onDiscover }) {
        */
       // appelé par onScrubComplete : la position scrubée s'est posée = le scroll est arrêté
       const finishCount = () => {
-        const tl = cache.get('.blk-stats:in:count')
+        const tl = cache.get('.blk-stats:in:count:sweep') // le comptage = premier passage
         if (!tl?.isActive() || tl.reversed()) return
         const left = (tl.duration() - tl.time()) / tl.timeScale()
         if (left > COUNT_FINISH) tl.timeScale((tl.duration() - tl.time()) / COUNT_FINISH)
@@ -346,12 +349,10 @@ export default function Hero({ onDiscover }) {
         <div className="hero-copy">
           <div className="blk blk-intro" id="design" data-depth="1">
             <h1 className="t-display">
-              <BlurLetters text={INTRO.title} />
+              <LightText text={INTRO.title} />
               <span className="led" />
             </h1>
-            <p className="t-sub">
-              <BlurLine text={INTRO.sub} />
-            </p>
+            <p className="t-sub rise">{INTRO.sub}</p>
           </div>
 
           <div className="blk blk-stats" id="performance" data-depth="0.8">
@@ -361,7 +362,13 @@ export default function Hero({ onDiscover }) {
                 <div className="stat" key={s.label}>
                   <dt className="stat-label label rise">{s.label}</dt>
                   <dd className="stat-value">
-                    <BlurLine text={s.value} className="stat-num" />
+                    {/* le fantôme réserve la largeur finale : le compteur ne décale rien */}
+                    <span className="stat-num rise">
+                      <span className="stat-ghost" aria-hidden="true">
+                        {s.value}
+                      </span>
+                      <span className="stat-count">{s.value}</span>
+                    </span>
                     <span className="stat-unit rise">{s.unit}</span>
                     <span className="led" />
                   </dd>
@@ -374,7 +381,7 @@ export default function Hero({ onDiscover }) {
           <div className="blk blk-driver" id="habitacle" data-depth="0.7">
             <span className="driver-halo" aria-hidden="true" />
             <h2 className="t-display t-center">
-              <BlurLetters text={DRIVER.title} />
+              <LightText text={DRIVER.title} />
               <span className="led led-center" />
             </h2>
             {/* .rise anime y sur l'enveloppe : le bouton garde x/y pour l'effet magnétique */}

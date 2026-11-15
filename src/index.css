@@ -145,6 +145,49 @@ a {
   transform-origin: left center;
 }
 
+/*
+ * Texte révélé par la lumière (LightText.jsx + lib/light.js).
+ * Le masque déborde du bloc (--lt-bleed) pour ne pas rogner les jambages
+ * (interlignage < 1) ; la copie éclairée a la même boîte que le masque (débord
+ * en padding) : leurs xPercent opposés se compensent exactement.
+ * État par défaut = éclairé : mouvement réduit et avant le JS.
+ */
+.lt {
+  --lt-bleed: 0.3em;
+  position: relative;
+  display: block;
+}
+.lt-dim {
+  color: var(--acier);
+}
+.lt-mask {
+  position: absolute;
+  inset: calc(-1 * var(--lt-bleed));
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+.lt-lit {
+  position: absolute;
+  inset: 0;
+  padding: var(--lt-bleed);
+  color: var(--chrome);
+}
+/* Lueur du phare : demi-ellipse douce accrochée au bord avant du balayage */
+.lt-beam {
+  --lt-beam-w: 6em;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(var(--lt-beam-w) / -2); /* centrée sur le bord : le masque coupe la moitié avant */
+  width: var(--lt-beam-w);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--chrome) 22%, transparent), transparent);
+  opacity: 0;
+}
+.is-lighting :is(.lt-dim, .lt-mask, .lt-lit, .lt-beam) {
+  will-change: transform, opacity;
+}
+
 /* Bouton contour partagé */
 .btn-outline {
   display: inline-flex;

@@ -2,6 +2,8 @@ import { useLayoutEffect, useRef } from 'react'
 import { gsap, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { LINES } from '../content.js'
+import LightText from './LightText.jsx'
+import { useTitleReveal } from '../lib/light.js'
 import './Lines.css'
 
 /*
@@ -15,6 +17,7 @@ import './Lines.css'
 export default function Lines() {
   const reduced = useMediaQuery(MQ_REDUCED)
   const rootRef = useRef(null)
+  useTitleReveal(rootRef)
 
   useLayoutEffect(() => {
     if (reduced) return
@@ -63,7 +66,7 @@ export default function Lines() {
     <section className="section grid-5-7 lines" id="lignes" ref={rootRef} aria-labelledby="lines-title">
       <div className="lines-text">
         <h2 className="section-title lines-title" id="lines-title">
-          {LINES.title}
+          <LightText text={LINES.title} />
           <span className="led" />
         </h2>
         {LINES.body.map((p) => (

@@ -3,6 +3,8 @@ import { gsap, scrollToSection, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import { useMagnetic } from '../lib/magnetic.js'
 import { RANGE } from '../content.js'
+import LightText from './LightText.jsx'
+import { useTitleReveal } from '../lib/light.js'
 import './Range.css'
 
 /*
@@ -21,6 +23,7 @@ export default function Range() {
   const isMobile = useMediaQuery(MQ_MOBILE)
   const reduced = useMediaQuery(MQ_REDUCED)
   const rootRef = useRef(null)
+  useTitleReveal(rootRef)
 
   useLayoutEffect(() => {
     if (isMobile || reduced) return
@@ -58,7 +61,7 @@ export default function Range() {
     <section className="section range" id="gamme" ref={rootRef} aria-labelledby="range-title">
       <header className="range-head">
         <h2 className="section-title range-title" id="range-title">
-          {RANGE.title}
+          <LightText text={RANGE.title} />
           <span className="led" />
         </h2>
         <p className="range-intro">{RANGE.intro}</p>

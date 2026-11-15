@@ -1,6 +1,8 @@
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { CONTACT, RANGE } from '../content.js'
 import { useMagnetic } from '../lib/magnetic.js'
+import LightText from './LightText.jsx'
+import { useTitleReveal } from '../lib/light.js'
 import './Contact.css'
 
 /*
@@ -12,6 +14,8 @@ export default function Contact() {
   const magnetic = useMagnetic()
   const uid = useId()
   const [sent, setSent] = useState(false)
+  const rootRef = useRef(null)
+  useTitleReveal(rootRef)
   const f = CONTACT.fields
 
   const onSubmit = (e) => {
@@ -31,10 +35,10 @@ export default function Contact() {
   )
 
   return (
-    <section className="section grid-5-7 contact" id="contact" aria-labelledby={`${uid}-title`}>
+    <section className="section grid-5-7 contact" id="contact" ref={rootRef} aria-labelledby={`${uid}-title`}>
       <header className="contact-head">
         <h2 className="section-title contact-title" id={`${uid}-title`}>
-          {CONTACT.title}
+          <LightText text={CONTACT.title} />
           <span className="led" />
         </h2>
         <p className="contact-intro">{CONTACT.intro}</p>
