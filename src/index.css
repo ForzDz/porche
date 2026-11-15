@@ -17,6 +17,8 @@
   --lamp-opacity: 0.12; /*   intensité du halo de la lampe (--lueur) */
   --lamp-radius: 420px; /*   rayon de la lampe */
   --texture-opacity: 0.5; /* texture « carrosserie » révélée sous la lampe */
+  --sweep-opacity: 0.9; /*   intensité du reflet qui balaie les titres */
+  --sweep-width: 3.5em; /*   largeur de la bande de lumière (em du titre) */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   --scrim: color-mix(in srgb, var(--nuit) 78%, transparent);
@@ -163,33 +165,50 @@ a {
   display: block;
 }
 .lt-dim {
-  color: var(--acier);
+  opacity: 0.25; /* avant le phare ; caché ensuite sous la copie éclairée */
 }
-.lt-mask {
+.lt-mask,
+.lt-glint {
   position: absolute;
-  inset: calc(-1 * var(--lt-bleed));
   overflow: hidden;
   user-select: none;
   pointer-events: none;
+}
+.lt-mask {
+  inset: calc(-1 * var(--lt-bleed));
 }
 .lt-lit {
   position: absolute;
   inset: 0;
   padding: var(--lt-bleed);
-  color: var(--chrome);
 }
-/* Lueur du phare : demi-ellipse douce accrochée au bord avant du balayage */
-.lt-beam {
-  --lt-beam-w: 6em;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: calc(var(--lt-beam-w) / -2); /* centrée sur le bord : le masque coupe la moitié avant */
-  width: var(--lt-beam-w);
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--chrome) 22%, transparent), transparent);
+/* Bande de lumière : bords adoucis par un masque STATIQUE (seule la position bouge) */
+.lt-glint {
+  top: calc(-1 * var(--lt-bleed));
+  bottom: calc(-1 * var(--lt-bleed));
+  left: 0;
+  width: var(--sweep-width);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent);
   opacity: 0;
 }
-.is-lighting :is(.lt-dim, .lt-mask, .lt-lit, .lt-beam) {
+/* lueur douce autour du reflet */
+.lt-glint::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--lueur) 30%, transparent), transparent);
+  opacity: calc(var(--sweep-opacity) * 0.6);
+}
+/* le reflet sur les lettres (largeur = celle du titre, posée par le JS) */
+.lt-glint-text {
+  position: absolute;
+  top: var(--lt-bleed);
+  left: 0;
+  color: var(--lueur);
+  opacity: var(--sweep-opacity);
+}
+.is-lighting :is(.lt-dim, .lt-mask, .lt-lit, .lt-glint, .lt-glint-text) {
   will-change: transform, opacity;
 }
 

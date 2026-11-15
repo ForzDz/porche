@@ -7,28 +7,55 @@ import { MQ_REDUCED, useMediaQuery } from './media.js'
  * Transform + opacity uniquement. Durées en s (GSAP) : exception connue
  * aux tokens CSS, comme le reste des timelines.
  */
-const SWEEP = 1.1 // traversée du phare
+const SWEEP = 1.2 // traversée du phare
+const DIM = 0.25 // opacité du titre avant le passage du phare
 
-/** Timeline (non pausée) qui balaie tous les .lt contenus dans `el`. */
+/**
+ * Timeline (non pausée) qui balaie tous les .lt contenus dans `el`.
+ * Le reflet (.lt-glint) part juste avant le titre et sort juste après :
+ * fenêtre et copie --lueur ont des x opposés (la copie reste sur les lettres).
+ * Largeurs lues une fois, à la construction.
+ */
 export function lightReveal(el) {
-  const q = (s) => el.querySelectorAll(s)
   const tl = gsap.timeline({
     onStart: () => el.classList.add('is-lighting'),
     onComplete: () => el.classList.remove('is-lighting'),
   })
-  tl.fromTo(q('.lt-dim'), { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
-    .fromTo(q('.lt-mask'), { xPercent: -100 }, { xPercent: 0, duration: SWEEP, ease: 'power2.inOut' }, 0.1)
-    .fromTo(q('.lt-lit'), { xPercent: 100 }, { xPercent: 0, duration: SWEEP, ease: 'power2.inOut' }, 0.1)
-    // la lueur naît avec le balayage (jamais visible en attendant), puis s'éteint à l'arrivée
-    .fromTo(q('.lt-beam'), { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power1.out' }, 0.1)
-    .to(q('.lt-beam'), { opacity: 0, duration: 0.45, ease: 'power1.out' }, SWEEP - 0.1)
+  el.querySelectorAll('.lt').forEach((lt) => {
+    const q = (s) => lt.querySelectorAll(s)
+    const glint = lt.querySelector('.lt-glint')
+    const glintText = lt.querySelector('.lt-glint-text')
+    const w = lt.offsetWidth
+    const band = glint.offsetWidth
+    glintText.style.width = `${w}px` // même retour à la ligne que le titre
+    tl.fromTo(q('.lt-dim'), { opacity: 0 }, { opacity: DIM, duration: 0.35, ease: 'power1.out' }, 0)
+      .fromTo(q('.lt-mask'), { xPercent: -100 }, { xPercent: 0, duration: SWEEP, ease: 'power2.inOut' }, 0.15)
+      .fromTo(q('.lt-lit'), { xPercent: 100 }, { xPercent: 0, duration: SWEEP, ease: 'power2.inOut' }, 0.15)
+      .fromTo(glint, { x: -band, opacity: 0 }, { x: w, duration: SWEEP, ease: 'power2.inOut' }, 0.15)
+      .fromTo(glintText, { x: band }, { x: -w, duration: SWEEP, ease: 'power2.inOut' }, 0.15)
+      .to(glint, { opacity: 1, duration: 0.2, ease: 'power1.out' }, 0.15)
+      .to(glint, { opacity: 0, duration: 0.3, ease: 'power1.in' }, 0.15 + SWEEP - 0.3)
+  })
   return tl
 }
 
 /** Pose l'état « éclairé » final (entrées suivantes du hero, sans balayage). */
 export function setLit(tl, el, pos = 0) {
   const q = (s) => el.querySelectorAll(s)
-  return tl.set(q('.lt-mask, .lt-lit'), { xPercent: 0 }, pos).set(q('.lt-dim'), { opacity: 1 }, pos).set(q('.lt-beam'), { opacity: 0 }, pos)
+  return tl.set(q('.lt-mask, .lt-lit'), { xPercent: 0 }, pos).set(q('.lt-dim'), { opacity: DIM }, pos).set(q('.lt-glint'), { opacity: 0 }, pos)
+}
+
+/*
+ * Panneau ?tune : rejoue tous les balayages (titres visibles ou non) et
+ * prévient les autres lumières (LED de Lignes, showroom) par un événement.
+ */
+export const REPLAY_EVENT = 'light:replay'
+export function replayLight() {
+  document.querySelectorAll('.lt').forEach((lt) => {
+    gsap.killTweensOf(lt.querySelectorAll('*'))
+    lightReveal(lt.parentElement)
+  })
+  window.dispatchEvent(new Event(REPLAY_EVENT))
 }
 
 /*
