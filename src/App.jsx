@@ -8,6 +8,7 @@ import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
 import Loader from './components/Loader.jsx'
 import Lamp from './components/Lamp.jsx'
+import ScrollProgress from './components/ScrollProgress.jsx'
 import { MQ_MOBILE, MQ_REDUCED, useMediaQuery } from './lib/media.js'
 import { ScrollTrigger, scrollToSection, startLenis, stopLenis } from './lib/scroll.js'
 
@@ -57,6 +58,7 @@ export default function App() {
       </main>
       <Footer />
       <Lamp />
+      <ScrollProgress />
       {TUNE && (
         <Suspense fallback={null}>
           <TunePanel />

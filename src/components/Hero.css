@@ -13,10 +13,67 @@
   background: var(--nuit);
 }
 
+.hero-px,
 .hero-layers,
 .hero-media {
   position: absolute;
   inset: 0;
+}
+/* .hero-px = enveloppes de parallaxe (Hero.jsx) : transform posé par le JS, desktop à pointeur fin */
+
+/* ── Effets « caméra » (desktop à pointeur fin, jamais en mouvement réduit) ── */
+/* Vignette : bords plus sombres, dégradé statique (jamais animé) */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 72% 78% at 50% 48%, transparent 55%, var(--vignette) 100%);
+  pointer-events: none;
+}
+/* Grain de film : tuile de bruit 128 px, déplacée par paliers (steps) en transform.
+   Décalages pris modulo la tuile, dans ±64 px : débord d'une demi-tuile suffit
+   (calque 18 % plus petit qu'avec une tuile entière). */
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+}
+.hero-grain-tex {
+  position: absolute;
+  inset: -64px;
+  background: url('/grain.png') repeat;
+  animation: grain var(--dur-grain) steps(1, end) infinite paused;
+}
+.hero-stage.is-onscreen .hero-grain-tex {
+  animation-play-state: running;
+  will-change: transform;
+}
+@keyframes grain {
+  0% {
+    transform: translate(0, 0);
+  }
+  12.5% {
+    transform: translate(-47px, 31px);
+  }
+  25% {
+    transform: translate(62px, 40px);
+  }
+  37.5% {
+    transform: translate(27px, -19px);
+  }
+  50% {
+    transform: translate(-51px, -54px);
+  }
+  62.5% {
+    transform: translate(-37px, 12px);
+  }
+  75% {
+    transform: translate(18px, 58px);
+  }
+  87.5% {
+    transform: translate(55px, -22px);
+  }
 }
 
 .hero-img,

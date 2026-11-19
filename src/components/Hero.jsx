@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, willChangeWhileActive } from '../lib/scroll.js'
-import { MQ_MOBILE, useMediaQuery } from '../lib/media.js'
+import { gsap, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
+import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import LightText from './LightText.jsx'
 import { lightReveal, setLit } from '../lib/light.js'
@@ -20,6 +20,13 @@ const INTRO_END = 0.1
 const PIN_LENGTH = 2.75 // en hauteurs d'écran (5 avant : trop long à parcourir)
 // À l'arrêt du scroll, un comptage en cours finit en 0,3 s au plus (= --dur-fast)
 const COUNT_FINISH = 0.3
+
+/*
+ * Parallaxe au pointeur (desktop à pointeur fin uniquement) : les plans glissent
+ * VERS le pointeur, lissés par quickTo. Vidéo agrandie à 1.04 : avec 10 px de
+ * course, aucun bord n'apparaît (1.04 = ±29 px de marge à 1440).
+ */
+const PARALLAX = { media: 10, copy: 5, scale: 1.04, duration: 0.8 }
 
 /*
  * Progression du scroll (0-1) → position dans le média (0-1), par segments,
@@ -59,6 +66,8 @@ const PHASES = [
 
 export default function Hero({ onDiscover }) {
   const isMobile = useMediaQuery(MQ_MOBILE)
+  // effets « caméra » (parallaxe, grain, vignette) : pointeur fin + desktop. Mouvement réduit = StaticHero.
+  const fx = useMediaQuery(MQ_FINE_POINTER) && !isMobile
   const stageRef = useRef(null)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
@@ -299,94 +308,172 @@ export default function Hero({ onDiscover }) {
     }
   }, [isMobile])
 
+  /*
+   * Parallaxe + pause hors champ. Actifs seulement quand le hero est à l'écran :
+   * écoute du pointeur, will-change et animation du grain (classe .is-onscreen).
+   * Transforms posés sur des enveloppes (.hero-px-*) : jamais sur .hero-layers /
+   * .hero-copy, que la sortie du hero déplace déjà en y.
+   */
+  useLayoutEffect(() => {
+    if (!fx) return
+    const stage = stageRef.current
+    const media = stage.querySelector('.hero-px-media')
+    const copy = stage.querySelector('.hero-px-copy')
+    const ease = 'power3.out'
+    const { duration } = PARALLAX
+    let to = null
+    const ctx = gsap.context(() => {
+      gsap.set(media, { scale: PARALLAX.scale })
+      to = {
+        mx: gsap.quickTo(media, 'x', { duration, ease }),
+        my: gsap.quickTo(media, 'y', { duration, ease }),
+        cx: gsap.quickTo(copy, 'x', { duration, ease }),
+        cy: gsap.quickTo(copy, 'y', { duration, ease }),
+      }
+    }, stage)
+
+    // -1 → 1 depuis le centre de l'écran
+    const aim = (nx, ny) => {
+      to.mx(nx * PARALLAX.media)
+      to.my(ny * PARALLAX.media)
+      to.cx(nx * PARALLAX.copy)
+      to.cy(ny * PARALLAX.copy)
+    }
+    const move = (e) => aim((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1)
+    // pointeur sorti de la fenêtre : les plans reviennent au centre
+    const leave = (e) => !e.relatedTarget && aim(0, 0)
+
+    let onscreen = false
+    const setOnscreen = (on) => {
+      if (on === onscreen) return
+      onscreen = on
+      stage.classList.toggle('is-onscreen', on)
+      media.style.willChange = copy.style.willChange = on ? 'transform' : ''
+      if (on) {
+        window.addEventListener('pointermove', move, { passive: true })
+        document.addEventListener('pointerout', leave)
+      } else {
+        window.removeEventListener('pointermove', move)
+        document.removeEventListener('pointerout', leave)
+      }
+    }
+    const st = ScrollTrigger.create({
+      trigger: stage.parentElement, // .hero (pin compris)
+      start: 'top bottom',
+      end: 'bottom top',
+      onToggle: (self) => setOnscreen(self.isActive),
+    })
+    setOnscreen(st.isActive)
+
+    return () => {
+      setOnscreen(false)
+      st.kill()
+      ctx.revert()
+    }
+  }, [fx])
+
   return (
     <section className="hero" aria-label="911 GT3 Concept">
       <div className="hero-stage" ref={stageRef}>
-        {/* Plans visuels */}
-        <div className="hero-layers" aria-hidden="true">
-          <img className="hero-img hero-dark" src="/intro-dark.jpg" alt="" fetchPriority="high" decoding="async" />
-          <img className="hero-img hero-lit" src="/intro-lit.jpg" alt="" decoding="async" />
-          {/* 0-10 % : une bande de lueur traverse le showroom pendant qu'il s'allume */}
-          <div className="hero-sweep" />
-          <div className="hero-media">
-            <img ref={posterRef} className="hero-img hero-poster" src="/poster.jpg" alt="" decoding="async" />
-            {isMobile ? (
-              <canvas ref={canvasRef} className="hero-canvas" />
-            ) : (
-              <video
-                ref={videoRef}
-                className="hero-video"
-                src="/hero.mp4"
-                muted
-                playsInline
-                preload="auto"
-                disablePictureInPicture
-                disableRemotePlayback
-                tabIndex={-1}
-              />
-            )}
+        {/* Plans visuels (enveloppe : parallaxe au pointeur) */}
+        <div className="hero-px hero-px-media">
+          <div className="hero-layers" aria-hidden="true">
+            <img className="hero-img hero-dark" src="/intro-dark.jpg" alt="" fetchPriority="high" decoding="async" />
+            <img className="hero-img hero-lit" src="/intro-lit.jpg" alt="" decoding="async" />
+            {/* 0-10 % : une bande de lueur traverse le showroom pendant qu'il s'allume */}
+            <div className="hero-sweep" />
+            <div className="hero-media">
+              <img ref={posterRef} className="hero-img hero-poster" src="/poster.jpg" alt="" decoding="async" />
+              {isMobile ? (
+                <canvas ref={canvasRef} className="hero-canvas" />
+              ) : (
+                <video
+                  ref={videoRef}
+                  className="hero-video"
+                  src="/hero.mp4"
+                  muted
+                  playsInline
+                  preload="auto"
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  tabIndex={-1}
+                />
+              )}
+            </div>
+            <div className="scrim scrim-left" />
+            <div className="scrim scrim-top" />
+            <div className="scrim scrim-bottom" />
           </div>
-          <div className="scrim scrim-left" />
-          <div className="scrim scrim-top" />
-          <div className="scrim scrim-bottom" />
         </div>
 
-        {/* Texte : toujours sur les zones sombres */}
-        <div className="hero-copy">
-          <div className="blk blk-intro" id="design">
-            <h1 className="t-display">
-              <LightText text={INTRO.title} />
-              <span className="led" />
-            </h1>
-            <p className="t-sub rise">{INTRO.sub}</p>
-          </div>
+        {/* Vignette statique : bords plus sombres (desktop) */}
+        {fx && <div className="hero-vignette" aria-hidden="true" />}
 
-          <div className="blk blk-stats" id="performance">
-            <h2 className="sr-only">Performances</h2>
-            <dl className="stats">
-              {STATS.map((s) => (
-                <div className="stat" key={s.label}>
-                  <dt className="stat-label label rise">{s.label}</dt>
-                  <dd className="stat-value">
-                    {/* le fantôme réserve la largeur finale : le compteur ne décale rien */}
-                    <span className="stat-num rise">
-                      <span className="stat-ghost" aria-hidden="true">
-                        {s.value}
+        {/* Texte : toujours sur les zones sombres (enveloppe : parallaxe, moitié de la vidéo) */}
+        <div className="hero-px hero-px-copy">
+          <div className="hero-copy">
+            <div className="blk blk-intro" id="design">
+              <h1 className="t-display">
+                <LightText text={INTRO.title} />
+                <span className="led" />
+              </h1>
+              <p className="t-sub rise">{INTRO.sub}</p>
+            </div>
+
+            <div className="blk blk-stats" id="performance">
+              <h2 className="sr-only">Performances</h2>
+              <dl className="stats">
+                {STATS.map((s) => (
+                  <div className="stat" key={s.label}>
+                    <dt className="stat-label label rise">{s.label}</dt>
+                    <dd className="stat-value">
+                      {/* le fantôme réserve la largeur finale : le compteur ne décale rien */}
+                      <span className="stat-num rise">
+                        <span className="stat-ghost" aria-hidden="true">
+                          {s.value}
+                        </span>
+                        <span className="stat-count">{s.value}</span>
                       </span>
-                      <span className="stat-count">{s.value}</span>
-                    </span>
-                    <span className="stat-unit rise">{s.unit}</span>
-                    <span className="led" />
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <p className="stats-note rise">{STATS_NOTE}</p>
-          </div>
+                      <span className="stat-unit rise">{s.unit}</span>
+                      <span className="led" />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="stats-note rise">{STATS_NOTE}</p>
+            </div>
 
-          <div className="blk blk-driver" id="habitacle">
-            <span className="driver-halo" aria-hidden="true" />
-            <h2 className="t-display t-center">
-              <LightText text={DRIVER.title} />
-              <span className="led led-center" />
-            </h2>
-            <span className="rise">
-              <button type="button" className="btn-outline" onClick={onDiscover}>
-                {DRIVER.cta}
-                <span className="btn-arrow" aria-hidden="true">
-                  ↓
-                </span>
-              </button>
-            </span>
-          </div>
+            <div className="blk blk-driver" id="habitacle">
+              <span className="driver-halo" aria-hidden="true" />
+              <h2 className="t-display t-center">
+                <LightText text={DRIVER.title} />
+                <span className="led led-center" />
+              </h2>
+              <span className="rise">
+                <button type="button" className="btn-outline" onClick={onDiscover}>
+                  {DRIVER.cta}
+                  <span className="btn-arrow" aria-hidden="true">
+                    ↓
+                  </span>
+                </button>
+              </span>
+            </div>
 
-          {/* Invitation à défiler : la LED du bas de caisse qui pulse (opacité) */}
-          <div className="hero-cue" aria-hidden="true">
-            <div className="hero-cue-inner">
-              <span className="hero-cue-led" />
+            {/* Invitation à défiler : la LED du bas de caisse qui pulse (opacité) */}
+            <div className="hero-cue" aria-hidden="true">
+              <div className="hero-cue-inner">
+                <span className="hero-cue-led" />
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Grain de film : tuile de bruit déplacée par paliers (transform), en pause hors champ */}
+        {fx && (
+          <div className="hero-grain" aria-hidden="true">
+            <div className="hero-grain-tex" />
+          </div>
+        )}
 
         {/* Sortie : noir par-dessus vidéo + texte (opacité seulement) */}
         <div className="hero-veil" aria-hidden="true" />

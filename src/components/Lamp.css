@@ -47,3 +47,15 @@
     color-mix(in srgb, var(--lueur) 30%, transparent) 3px 4px
   );
 }
+
+/* Au-dessus du hero : projecteur plus doux, sans texture (fondus d'opacité seulement) */
+.lamp-halo,
+.lamp-texture {
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.lamp.is-hero .lamp-halo {
+  opacity: var(--lamp-hero-opacity);
+}
+.lamp.is-hero .lamp-texture {
+  opacity: 0;
+}

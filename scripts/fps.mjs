@@ -6,6 +6,7 @@
  *   --runs 3                    nombre de passes (défaut 2)
  *   --zone sections             part de Lignes (après le hero) et promène le pointeur
  *                               pendant la molette (lampe, révélations, cartes)
+ *   --pointer                   promène aussi le pointeur dans le hero (parallaxe, lampe)
  *
  * Mesure requestAnimationFrame pendant ~4 s de molette (défaut : hero, Lenis + scrub vidéo).
  * Headless = pas de vrai GPU ni d'écran : chiffres valables pour COMPARER deux
@@ -18,10 +19,11 @@ import { buildAndServe, SHOTS } from './lib/serve.mjs'
 const opt = args()
 const runs = Number(opt.runs ?? 2)
 const sections = opt.zone === 'sections'
+const pointer = sections || !!opt.pointer
 const base = String(opt.ref ?? 'working').replace(/[^\w.~-]+/g, '_')
 const site = await buildAndServe({ ref: opt.ref, outDir: join(SHOTS, '.dist', `fps-${base}`) })
 const chrome = await launchChrome()
-console.log(`▸ ${site.label} · ${runs} passe(s) · zone ${sections ? 'sections (pointeur en mouvement)' : 'hero'}`)
+console.log(`▸ ${site.label} · ${runs} passe(s) · zone ${sections ? 'sections' : 'hero'}${pointer ? ' · pointeur en mouvement' : ''}`)
 try {
   for (let run = 1; run <= runs; run++) {
     const page = await chrome.newPage({ url: site.url, width: 1440, height: 900, mobile: false, mask: false })
@@ -33,9 +35,9 @@ try {
     }
     await page.ev(`window.__f = []; (function loop(t) { window.__f.push(t); if (window.__f.length < 100000) requestAnimationFrame(loop) })(performance.now())`)
     for (let i = 0; i < 120; i++) {
-      const x = sections ? Math.round(720 + 430 * Math.sin(i / 9)) : 700
-      const y = sections ? Math.round(450 + 250 * Math.sin(i / 6)) : 450
-      if (sections) await page.s('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y })
+      const x = pointer ? Math.round(720 + 430 * Math.sin(i / 9)) : 700
+      const y = pointer ? Math.round(450 + 250 * Math.sin(i / 6)) : 450
+      if (pointer) await page.s('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y })
       await page.s('Input.dispatchMouseEvent', { type: 'mouseWheel', x, y, deltaX: 0, deltaY: 60 })
       await sleep(33)
     }
