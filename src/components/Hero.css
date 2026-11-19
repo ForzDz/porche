@@ -159,7 +159,8 @@
 .t-display {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 400;
+  font-stretch: var(--stretch-display);
+  font-weight: var(--fw-display);
   font-size: var(--fs-display);
   line-height: 0.98;
   letter-spacing: var(--tracking-display);
@@ -183,6 +184,19 @@
   top: 20%;
   max-width: min(26rem, 34vw);
 }
+/* Desktop : « Née la nuit » sur une seule ligne, dans le mur sombre à gauche */
+@media (min-width: 768px) {
+  .blk-intro {
+    max-width: none;
+  }
+  .blk-intro .t-display {
+    font-size: var(--fs-hero-title);
+    white-space: nowrap;
+  }
+  .blk-intro .t-sub {
+    max-width: min(26rem, 34vw);
+  }
+}
 
 /* 35-65 % — haut gauche, sous les néons du plafond */
 .blk-stats {
@@ -204,6 +218,8 @@
 .stat-value {
   margin: 0;
   font-family: var(--font-display);
+  font-stretch: var(--stretch-display);
+  font-weight: var(--fw-display);
   font-size: var(--fs-h2);
   line-height: var(--lh-tight);
   font-variant-numeric: lining-nums;

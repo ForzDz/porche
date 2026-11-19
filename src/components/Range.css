@@ -78,7 +78,8 @@
 .card-title {
   margin: 0 0 var(--sp-7);
   font-family: var(--font-display);
-  font-weight: 400;
+  font-stretch: var(--stretch-display);
+  font-weight: var(--fw-display);
   font-size: var(--fs-h2);
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-display);
@@ -104,7 +105,8 @@
 .card-price {
   margin: 0 0 var(--sp-7);
   font-family: var(--font-display);
-  font-style: italic;
+  font-stretch: var(--stretch-display);
+
   font-size: var(--fs-h3);
   color: var(--chrome);
 }

@@ -7,8 +7,11 @@
   --rouge: #e10600;
   --lueur: #f4efe6; /* lumière uniquement (lampe, balayages, reflets) : jamais du texte */
 
-  --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
-  --font-text: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Auto-hébergées (main.jsx). Display = Archivo Expanded : toujours avec --stretch-display */
+  --font-display: 'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-text: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --stretch-display: 125%; /* axe wdth d'Archivo : 125 % = Expanded */
+  --fw-display: 500; /*       titres et chiffres */
 
   --gutter: clamp(1rem, 4.5vw, 4.5rem);
   --header-h: clamp(3.5rem, 6vw, 4.5rem);
@@ -26,7 +29,8 @@
   --scrim-soft: color-mix(in srgb, var(--nuit) 45%, transparent);
 
   /* ── Typographie : 9 niveaux (px à 1440 / 375 / 320) ── */
-  --fs-display: clamp(2.6rem, 5.4vw, 5.75rem); /* 78 / 42 / 42  titres de section, titre du hero */
+  --fs-display: clamp(2.6rem, 5.4vw, 5.75rem); /* 78 / 42 / 42  titres de section */
+  --fs-hero-title: clamp(2.5rem, 4.45vw, 4rem); /* 64 / — / —  « Née la nuit » (desktop, une ligne) */
   --fs-h1: clamp(2.25rem, 4.6vw, 4.75rem); /*      66 / —        « Tout part du volant » (desktop) */
   --fs-h2: clamp(2.25rem, 4vw, 4.25rem); /*        58 / 36 / 36  titres de carte, chiffres (desktop) */
   --fs-h3: 1.375rem; /*                            22            prix des cartes, marque du loader */
@@ -281,7 +285,8 @@ a {
 /* Titre de section (Lines, Gamme, Contact). Les marges restent locales. */
 .section-title {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-stretch: var(--stretch-display);
+  font-weight: var(--fw-display);
   font-size: var(--fs-display);
   line-height: 1.02;
   letter-spacing: var(--tracking-display);

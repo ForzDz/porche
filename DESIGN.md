@@ -35,16 +35,18 @@ Règles : le rouge ne remplit jamais une grande surface (exception assumée : le
 ## 3. Typography Rules
 
 **Familles**
-- Display : `--font-display` = Bodoni Moda (didone, éditoriale), poids 400, italique pour les accents (« *Concept* », prix).
-- Texte : `--font-text` = Hanken Grotesk, poids 300 (courant) et 400 (labels, boutons).
+- Display : `--font-display` = **Archivo Expanded** (Archivo variable, axe `wdth` à `--stretch-display` 125 %, toujours posé avec la famille), graisse `--fw-display` 500. Titres, chiffres du hero, titres de carte, prix, marque, « 911 » du footer.
+- Texte : `--font-text` = **Inter** (variable), poids 300 (courant) et 400 (labels, boutons).
+- **Auto-hébergées** (Fontsource, importées dans `main.jsx`, `font-display: swap`) : aucune requête Google Fonts. Pas de fichier italique (−100 Ko) : les accents (« Concept », prix) passent par la couleur (acier), pas par l'italique.
 
 **Échelle** (px à 1440 / 375 / 320)
 
 | Token | Valeur | px | Usage |
 |---|---|---|---|
-| `--fs-display` | `clamp(2.6rem, 5.4vw, 5.75rem)` | 78 / 42 / 42 | Titres de section, titre du hero |
+| `--fs-display` | `clamp(2.6rem, 5.4vw, 5.75rem)` | 78 / 42 / 42 | Titres de section |
+| `--fs-hero-title` | `clamp(2.5rem, 4.45vw, 4rem)` | 64 / — / — | « Née la nuit » (≥ 768 px) : **une seule ligne** (`nowrap`), dans le mur sombre à gauche, jamais sur la voiture (57 px à 1280) |
 | `--fs-h1` | `clamp(2.25rem, 4.6vw, 4.75rem)` | 66 / — / — | « Tout part du volant » (desktop) |
-| `--fs-h2` | `clamp(2.25rem, 4vw, 4.25rem)` | 58 / 36 / 36 | Titres de carte, chiffres du hero (desktop) |
+| `--fs-h2` | `clamp(2.25rem, 4vw, 4.25rem)` | 58 / 36 / 36 | Titres de carte, chiffres du hero (desktop, une ligne) |
 | `--fs-h3` | `1.375rem` | 22 | Prix des cartes, marque du loader |
 | `--fs-lead` | `clamp(1rem, 1.15vw, 1.125rem)` | 17 / 16 / 16 | Chapeaux, sous-titre du hero, marque du header |
 | `--fs-body` | `1rem` | 16 | Texte courant, champs (16 px : pas de zoom iOS) |
@@ -56,7 +58,7 @@ Décoratif : `--fs-giant` (911 du footer).
 Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver-sm`, `--fs-stat-sm` (les labels des chiffres restent en `--fs-micro`, 11 px minimum).
 
 **Interlignage** : `--lh-tight` 1 (chiffres, cartes) · titres de section 1.02 · `--lh-body` 1.55 · `--lh-relaxed` 1.7 (paragraphes longs).
-**Approche** : `--tracking-display` −0.01em (titres) · `--tracking-text` 0.04em (sous-titres, légendes) · `--tracking-label` 0.2em (capitales).
+**Approche** : `--tracking-display` −0.01em (titres Archivo Expanded) · `--tracking-text` 0.04em (sous-titres, légendes) · `--tracking-label` 0.2em (capitales).
 
 ## 4. Component Stylings
 
@@ -64,7 +66,7 @@ Variantes mobiles du hero (≤ 767 px) : `--fs-hero-title-sm`, `--fs-hero-driver
 |---|---|---|
 | **LED** (signature) | `.led` | Filet `--rouge` 1 px, 7.5rem max sous un titre (2.5–3rem sous un chiffre, une légende, un prix). Entre en `scaleX` 0 → 1 depuis la gauche. |
 | **Bouton** | `.btn-outline` | Contour chrome 55 %, angles vifs, `--fs-label` capitales `--tracking-label`, hauteur min 44 px. Survol : remplissage chrome qui glisse de gauche à droite (`scaleX`), texte passe en nuit. Flèche `.btn-arrow` qui descend de 3 px. |
-| **Titre de section** | `.section-title` | `--fs-display`, Bodoni 400, interlignage 1.02, suivi d'une `.led`. Marges locales au composant. Texte dans un `LightText` (révélé par la lumière). |
+| **Titre de section** | `.section-title` | `--fs-display`, Archivo Expanded 500, interlignage 1.02, suivi d'une `.led`. Marges locales au composant. Texte dans un `LightText` (révélé par la lumière). |
 | **Texte éclairé** (signature, direction A) | `LightText` · `.lt` | Le titre est à **25 %** d'opacité (`.lt-dim`), puis une **bande de lumière** `.lt-glint` (largeur `--sweep-width` 3.5em, bords adoucis par un masque statique) le traverse : copie `--lueur` des lettres (le reflet sur le chrome, opacité `--sweep-opacity` 0.9) + lueur radiale douce. Derrière le reflet, `.lt-lit` (100 %) est révélée par `.lt-mask` (`xPercent` opposés, même boîte, débord `--lt-bleed` 0.3em). Le reflet est de la lumière, pas du texte. État CSS par défaut = éclairé. |
 | **Lampe** (direction A) | `Lamp` · `.lamp` | Vraie lumière : halo `--lueur` (cœur net, bord doux) d'opacité `--lamp-opacity` (0.12), rayon `--lamp-radius` (420px), + texture « carrosserie » (fines lignes `--lueur` 30 %, pas de 4 px) révélée seulement sous la lampe (masque radial **statique**, opacité `--texture-opacity` 0.5), lignes recalées sur la page en transform. Groupe en `mix-blend-mode: lighten` : seul ce qui est plus sombre que la lumière s'éclaire, jamais le texte. Desktop à pointeur fin seulement. Éteinte pendant le hero (jamais sur la vidéo). z-index 40. |
 | **LED de transition** | `.lines-led` | `.led` pleine largeur en haut de Lignes (bord à bord) : s'allume de gauche à droite à la sortie du hero, avant le balayage du titre. Lueur rouge autour du filet = dégradé vertical **pré-rendu** (`::before`, 5rem de haut, pas de filter) qui suit son `scaleX`, intensité `--led-glow` (0.7). |

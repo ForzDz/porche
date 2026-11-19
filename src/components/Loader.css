@@ -18,11 +18,13 @@
 .loader-mark {
   margin: 0;
   font-family: var(--font-display);
+  font-stretch: var(--stretch-display);
   font-size: var(--fs-h3);
   letter-spacing: var(--tracking-text);
   color: var(--chrome);
 }
 .loader-mark em {
+  font-style: normal;
   color: var(--acier);
 }
 

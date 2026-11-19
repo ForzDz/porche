@@ -26,12 +26,13 @@
 
 .brand {
   font-family: var(--font-display);
+  font-stretch: var(--stretch-display);
   font-size: var(--fs-lead);
   letter-spacing: var(--tracking-text);
   white-space: nowrap;
 }
 .brand em {
-  font-style: italic;
+  font-style: normal;
   color: var(--acier);
 }
 

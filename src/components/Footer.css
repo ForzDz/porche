@@ -11,7 +11,8 @@
   width: fit-content;
   margin: 0 auto var(--space-m);
   font-family: var(--font-display);
-  font-weight: 400;
+  font-stretch: var(--stretch-display);
+  font-weight: var(--fw-display);
   font-size: var(--fs-giant);
   line-height: 0.8;
   letter-spacing: -0.02em;
