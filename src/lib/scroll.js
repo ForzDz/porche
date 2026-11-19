@@ -11,11 +11,11 @@ const subs = new Set()
 
 /**
  * Lenis piloté par le ticker GSAP : une seule boucle rAF pour tout le site.
- * lerp 0.12 : suit la molette de près, l'inertie retombe en ~0,3 s.
+ * lerp 0.1 : un peu plus doux que 0.12 sur une molette crantée, l'inertie retombe en ~0,4 s.
  */
 export function startLenis() {
   if (lenis) return lenis
-  lenis = new Lenis({ lerp: 0.12, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1 })
+  lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1 })
   lenis.on('scroll', (l) => {
     ScrollTrigger.update()
     subs.forEach((fn) => fn(l))
@@ -97,4 +97,35 @@ export const getScrollVelocity = () => Math.abs(lenis?.velocity ?? 0) * 60
 export const willChangeWhileActive = (targets, value = 'transform') => {
   const els = gsap.utils.toArray(targets)
   return (self) => els.forEach((el) => (el.style.willChange = self.isActive ? value : ''))
+}
+
+/** Délai sans événement de scroll après lequel on considère le scroll arrêté (ms). */
+export const SCROLL_IDLE = 200
+
+/**
+ * Début / fin d'un geste de scroll : onStart au premier événement, onIdle
+ * SCROLL_IDLE ms après le dernier. Sert à geler pendant le scroll ce qui
+ * coûte en composition (parallaxe, texture de la lampe). Renvoie le désabonnement.
+ */
+export function onScrollActivity(onStart, onIdle, idle = SCROLL_IDLE) {
+  let active = false
+  let timer = 0
+  const ping = () => {
+    if (!active) {
+      active = true
+      onStart()
+    }
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      active = false
+      onIdle()
+    }, idle)
+  }
+  const offLenis = onLenisScroll(ping)
+  window.addEventListener('scroll', ping, { passive: true }) // sans Lenis (sécurité)
+  return () => {
+    offLenis()
+    window.removeEventListener('scroll', ping)
+    clearTimeout(timer)
+  }
 }

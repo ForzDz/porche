@@ -48,14 +48,10 @@
   );
 }
 
-/* Au-dessus du hero : projecteur plus doux, sans texture (fondus d'opacité seulement) */
-.lamp-halo,
-.lamp-texture {
-  transition: opacity var(--dur-slow) var(--ease-out);
-}
-.lamp.is-hero .lamp-halo {
-  opacity: var(--lamp-hero-opacity);
-}
-.lamp.is-hero .lamp-texture {
+/* Pendant le scroll : texture éteinte (calque masqué = coûteux à recomposer à chaque image) */
+.lamp.is-scrolling .lamp-texture {
   opacity: 0;
+}
+.lamp-texture {
+  transition: opacity var(--dur-fast) var(--ease-out);
 }

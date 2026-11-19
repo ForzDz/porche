@@ -44,7 +44,7 @@ try {
     const { ev } = page
     await waitLoader(ev)
     await sleep(size.mobile ? 4000 : 2500) // séquence d'images (mobile) / vidéo
-    const PIN = 2.75 * size.height // longueur du pin du hero (PIN_LENGTH, Hero.jsx)
+    const PIN = 1.25 * size.height // longueur du pin du hero (= PIN_LENGTH, Hero.jsx)
     const goto = async (y, wait = 2600) => {
       await ev(`window.scrollTo(0, ${Math.round(y)})`)
       await sleep(wait)

@@ -23,7 +23,6 @@
   --sweep-opacity: 0.9; /*   intensité du reflet qui balaie les titres */
   --sweep-width: 3.5em; /*   largeur de la bande de lumière (em du titre) */
   --led-glow: 0.7; /*        lueur rouge autour de la LED pleine largeur (Lignes) */
-  --lamp-hero-opacity: 0.06; /* lampe au-dessus du hero : plus douce, sans texture */
   --grain-opacity: 0.05; /*  grain de film du hero */
   --vignette: color-mix(in srgb, var(--nuit) 70%, transparent); /* bords de la vignette du hero */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

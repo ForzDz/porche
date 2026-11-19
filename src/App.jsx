@@ -51,7 +51,7 @@ export default function App() {
       <Loader />
       <Header />
       <main id="top">
-        {reduced ? <StaticHero onDiscover={discover} /> : <Hero onDiscover={discover} />}
+        {reduced ? <StaticHero onDiscover={discover} /> : <Hero onDiscover={discover} grain={TUNE} />}
         <Lines />
         <Range />
         <Contact />

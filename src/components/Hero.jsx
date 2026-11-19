@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
+import { gsap, onScrollActivity, ScrollTrigger, willChangeWhileActive } from '../lib/scroll.js'
 import { MQ_FINE_POINTER, MQ_MOBILE, useMediaQuery } from '../lib/media.js'
 import { createFrameDriver, createVideoDriver } from '../lib/drivers.js'
 import LightText from './LightText.jsx'
@@ -17,7 +17,7 @@ import './Hero.css'
  * temporelle — rapide et nette même si le scroll s'arrête au milieu.
  */
 const INTRO_END = 0.1
-const PIN_LENGTH = 2.75 // en hauteurs d'écran (5 avant : trop long à parcourir)
+const PIN_LENGTH = 1.25 // en hauteurs d'écran (5 puis 2,75 avant : page ~20 % plus courte)
 // À l'arrêt du scroll, un comptage en cours finit en 0,3 s au plus (= --dur-fast)
 const COUNT_FINISH = 0.3
 
@@ -27,6 +27,67 @@ const COUNT_FINISH = 0.3
  * course, aucun bord n'apparaît (1.04 = ±29 px de marge à 1440).
  */
 const PARALLAX = { media: 10, copy: 5, scale: 1.04, duration: 0.8 }
+// Pendant le scroll, la parallaxe est gelée (tweens en pause, aucune écriture) ;
+// elle reprend vers la dernière position du pointeur SCROLL_IDLE (200 ms) après l'arrêt.
+
+/**
+ * Parallaxe au pointeur sur les enveloppes .hero-px-* (jamais sur .hero-layers /
+ * .hero-copy, que la sortie du hero déplace déjà en y).
+ * Renvoie { start, stop, revert } : start / stop suivent la visibilité du hero.
+ */
+function createParallax(stage) {
+  const media = stage.querySelector('.hero-px-media')
+  const copy = stage.querySelector('.hero-px-copy')
+  const { duration } = PARALLAX
+  const ease = 'power3.out'
+  let to = null
+  const ctx = gsap.context(() => {
+    gsap.set(media, { scale: PARALLAX.scale })
+    to = [
+      [gsap.quickTo(media, 'x', { duration, ease }), PARALLAX.media, 0],
+      [gsap.quickTo(media, 'y', { duration, ease }), PARALLAX.media, 1],
+      [gsap.quickTo(copy, 'x', { duration, ease }), PARALLAX.copy, 0],
+      [gsap.quickTo(copy, 'y', { duration, ease }), PARALLAX.copy, 1],
+    ]
+  }, stage)
+
+  let last = [0, 0] // -1 → 1 depuis le centre de l'écran
+  let scrolling = false
+  // resetTo (quickTo) relance aussi un tween mis en pause
+  const apply = () => to.forEach(([q, px, axis]) => q(last[axis] * px))
+  const aim = (nx, ny) => {
+    last = [nx, ny]
+    if (!scrolling) apply()
+  }
+  const move = (e) => aim((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1)
+  // pointeur sorti de la fenêtre : les plans reviennent au centre
+  const leave = (e) => !e.relatedTarget && aim(0, 0)
+  const freeze = () => {
+    scrolling = true
+    to.forEach(([q]) => q.tween?.pause())
+  }
+  const resume = () => {
+    scrolling = false
+    apply()
+  }
+
+  let offActivity = null
+  const start = () => {
+    media.style.willChange = copy.style.willChange = 'transform'
+    window.addEventListener('pointermove', move, { passive: true })
+    document.addEventListener('pointerout', leave)
+    offActivity = onScrollActivity(freeze, resume)
+  }
+  const stop = () => {
+    media.style.willChange = copy.style.willChange = ''
+    window.removeEventListener('pointermove', move)
+    document.removeEventListener('pointerout', leave)
+    offActivity?.()
+    offActivity = null
+    scrolling = false
+  }
+  return { start, stop, revert: () => (stop(), ctx.revert()) }
+}
 
 /*
  * Progression du scroll (0-1) → position dans le média (0-1), par segments,
@@ -64,7 +125,7 @@ const PHASES = [
   { sel: '.blk-driver', from: 0.76, to: Infinity },
 ]
 
-export default function Hero({ onDiscover }) {
+export default function Hero({ onDiscover, grain = false }) {
   const isMobile = useMediaQuery(MQ_MOBILE)
   // effets « caméra » (parallaxe, grain, vignette) : pointeur fin + desktop. Mouvement réduit = StaticHero.
   const fx = useMediaQuery(MQ_FINE_POINTER) && !isMobile
@@ -309,53 +370,20 @@ export default function Hero({ onDiscover }) {
   }, [isMobile])
 
   /*
-   * Parallaxe + pause hors champ. Actifs seulement quand le hero est à l'écran :
-   * écoute du pointeur, will-change et animation du grain (classe .is-onscreen).
-   * Transforms posés sur des enveloppes (.hero-px-*) : jamais sur .hero-layers /
-   * .hero-copy, que la sortie du hero déplace déjà en y.
+   * Hors champ = en pause : la classe .is-onscreen (posée seulement quand le
+   * hero est visible) fait tourner le cue (et le grain de ?tune) ; la parallaxe
+   * n'écoute le pointeur qu'à ce moment-là.
    */
   useLayoutEffect(() => {
-    if (!fx) return
     const stage = stageRef.current
-    const media = stage.querySelector('.hero-px-media')
-    const copy = stage.querySelector('.hero-px-copy')
-    const ease = 'power3.out'
-    const { duration } = PARALLAX
-    let to = null
-    const ctx = gsap.context(() => {
-      gsap.set(media, { scale: PARALLAX.scale })
-      to = {
-        mx: gsap.quickTo(media, 'x', { duration, ease }),
-        my: gsap.quickTo(media, 'y', { duration, ease }),
-        cx: gsap.quickTo(copy, 'x', { duration, ease }),
-        cy: gsap.quickTo(copy, 'y', { duration, ease }),
-      }
-    }, stage)
-
-    // -1 → 1 depuis le centre de l'écran
-    const aim = (nx, ny) => {
-      to.mx(nx * PARALLAX.media)
-      to.my(ny * PARALLAX.media)
-      to.cx(nx * PARALLAX.copy)
-      to.cy(ny * PARALLAX.copy)
-    }
-    const move = (e) => aim((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1)
-    // pointeur sorti de la fenêtre : les plans reviennent au centre
-    const leave = (e) => !e.relatedTarget && aim(0, 0)
-
+    const parallax = fx ? createParallax(stage) : null
     let onscreen = false
     const setOnscreen = (on) => {
       if (on === onscreen) return
       onscreen = on
       stage.classList.toggle('is-onscreen', on)
-      media.style.willChange = copy.style.willChange = on ? 'transform' : ''
-      if (on) {
-        window.addEventListener('pointermove', move, { passive: true })
-        document.addEventListener('pointerout', leave)
-      } else {
-        window.removeEventListener('pointermove', move)
-        document.removeEventListener('pointerout', leave)
-      }
+      if (on) parallax?.start()
+      else parallax?.stop()
     }
     const st = ScrollTrigger.create({
       trigger: stage.parentElement, // .hero (pin compris)
@@ -368,7 +396,7 @@ export default function Hero({ onDiscover }) {
     return () => {
       setOnscreen(false)
       st.kill()
-      ctx.revert()
+      parallax?.revert()
     }
   }, [fx])
 
@@ -468,8 +496,8 @@ export default function Hero({ onDiscover }) {
           </div>
         </div>
 
-        {/* Grain de film : tuile de bruit déplacée par paliers (transform), en pause hors champ */}
-        {fx && (
+        {/* Grain de film : ?tune uniquement (coûteux en composition). Paliers en transform, en pause hors champ */}
+        {fx && grain && (
           <div className="hero-grain" aria-hidden="true">
             <div className="hero-grain-tex" />
           </div>

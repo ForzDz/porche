@@ -1,11 +1,9 @@
 import { useLayoutEffect, useRef } from 'react'
-import { gsap, onLenisScroll, ScrollTrigger } from '../lib/scroll.js'
+import { gsap, onLenisScroll, onScrollActivity, ScrollTrigger } from '../lib/scroll.js'
 import { MQ_FINE_POINTER, MQ_MOBILE, MQ_REDUCED, useMediaQuery } from '../lib/media.js'
 import './Lamp.css'
 
 const LINE = 4 // pas des lignes de la texture (px) : doit suivre .lamp-lines (Lamp.css)
-const FOLLOW = 0.6 // lissage du suivi (s)
-const HERO_FOLLOW = 0.9 // au-dessus du hero : plus lent, plus doux
 
 /*
  * Le curseur est une lampe : un halo --lueur (cœur net, bord doux) et, dessous,
@@ -15,9 +13,10 @@ const HERO_FOLLOW = 0.9 // au-dessus du hero : plus lent, plus doux
  * Déplacement en transform (quickTo, lissé). Les lignes restent calées sur la
  * page (décalage modulo LINE recalculé à chaque image) : on éclaire une surface,
  * la texture ne glisse pas avec le pointeur.
- * Au-dessus du hero (pin + sortie) : projecteur plus doux (--lamp-hero-opacity),
- * sans texture, qui suit plus lentement (HERO_FOLLOW) ; classe .is-hero.
- * Éteinte (opacity 0) hors fenêtre.
+ * Éteinte (opacity 0) pendant le pin et la sortie du hero, et hors fenêtre.
+ * Pendant le scroll, la texture est éteinte (.is-scrolling, opacité) et n'est
+ * plus recalée : un calque masqué redessiné à chaque image coûtait ~10 i/s
+ * (profil réel : 48,6 → 59,3 i/s). Elle revient 200 ms après l'arrêt.
  * Desktop à pointeur fin seulement ; ni mobile, ni mouvement réduit.
  * Réglages : --lamp-opacity, --lamp-radius, --texture-opacity (:root, panneau ?tune).
  */
@@ -33,10 +32,8 @@ export default function Lamp() {
     if (!on) return
     const el = ref.current
     const lines = linesRef.current
-    const xTo = gsap.quickTo(el, 'x', { duration: FOLLOW, ease: 'power3.out' })
-    const yTo = gsap.quickTo(el, 'y', { duration: FOLLOW, ease: 'power3.out' })
-    // même tween, ralenti au-dessus du hero (timeScale) : pas de second tween concurrent sur x / y
-    const follow = (hero) => [xTo, yTo].forEach((q) => q.tween?.timeScale(hero ? FOLLOW / HERO_FOLLOW : 1))
+    const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3.out' })
+    const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3.out' })
     const setLinesY = gsap.quickSetter(lines, 'y', 'px')
     let inHero = true
     let pointer = false
@@ -54,24 +51,39 @@ export default function Lamp() {
       const top = gsap.getProperty(el, 'y') - radius + scroll
       setLinesY(-(((top % LINE) + LINE) % LINE))
     }
-    // recalage de la texture : seulement quand elle est visible (hors hero)
+    // recalage de la texture à chaque image : seulement allumée et hors scroll
+    let scrolling = false
     let aligning = false
-    const setAlign = (want) => {
+    const syncAlign = () => {
+      const want = lit && !scrolling
       if (want === aligning) return
       aligning = want
-      if (want) gsap.ticker.add(align)
-      else gsap.delayedCall(FOLLOW, () => !aligning && gsap.ticker.remove(align))
+      if (want) {
+        align()
+        gsap.ticker.add(align)
+      } else gsap.ticker.remove(align)
     }
+    const offActivity = onScrollActivity(
+      () => {
+        scrolling = true
+        el.classList.add('is-scrolling')
+        syncAlign()
+      },
+      () => {
+        scrolling = false
+        syncAlign() // recale avant de rallumer la texture
+        el.classList.remove('is-scrolling')
+      },
+    )
     const show = () => {
-      const want = pointer
+      const want = pointer && !inHero
       if (want !== lit) {
         lit = want
         el.style.willChange = lit ? 'transform, opacity' : ''
+        if (lit) syncAlign()
+        else gsap.delayedCall(0.6, () => !lit && syncAlign())
       }
-      el.classList.toggle('is-hero', inHero)
-      follow(inHero)
-      setAlign(lit && !inHero)
-      gsap.to(el, { opacity: want ? 1 : 0, duration: FOLLOW, ease: 'power1.out', overwrite: 'auto' })
+      gsap.to(el, { opacity: want ? 1 : 0, duration: 0.6, ease: 'power1.out', overwrite: 'auto' })
     }
 
     const move = (e) => {
@@ -92,7 +104,7 @@ export default function Lamp() {
     window.addEventListener('pointermove', move, { passive: true })
     document.addEventListener('pointerout', leave)
 
-    // pendant le pin du hero et sa sortie : mode projecteur (.is-hero)
+    // pendant le pin du hero et sa sortie : éteinte (jamais sur la vidéo)
     const st = ScrollTrigger.create({
       trigger: '.hero',
       start: 'top bottom',
@@ -103,14 +115,13 @@ export default function Lamp() {
       },
     })
     inHero = st.isActive
-    el.classList.toggle('is-hero', inHero)
-    follow(inHero)
 
     return () => {
       window.removeEventListener('pointermove', move)
       window.removeEventListener('scroll', onNativeScroll)
       document.removeEventListener('pointerout', leave)
       offScroll()
+      offActivity()
       ro.disconnect()
       st.kill()
       gsap.ticker.remove(align)

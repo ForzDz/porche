@@ -11,7 +11,6 @@ import './tune.css'
  */
 const CONTROLS = [
   { v: '--lamp-opacity', label: 'Lampe · intensité', min: 0, max: 0.5, step: 0.01 },
-  { v: '--lamp-hero-opacity', label: 'Lampe · intensité (hero)', min: 0, max: 0.3, step: 0.01 },
   { v: '--grain-opacity', label: 'Grain du hero', min: 0, max: 0.2, step: 0.01 },
   { v: '--lamp-radius', label: 'Lampe · rayon', min: 150, max: 800, step: 10, unit: 'px' },
   { v: '--texture-opacity', label: 'Texture sous la lampe', min: 0, max: 1, step: 0.05 },

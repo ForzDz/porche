@@ -29,7 +29,7 @@
 .range-cards::after {
   content: '';
   display: block;
-  height: var(--space-section);
+  height: var(--space-xs);
 }
 
 /* Desktop : la carte colle sous le header, la suivante la recouvre */
@@ -48,7 +48,7 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  height: min(calc(100vh - var(--header-h) - 4rem), 30rem);
+  height: min(calc(100vh - var(--header-h) - 4rem), 26rem); /* 26rem : la pile coûte moins de scroll */
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--acier) 18%, transparent);
   background: var(--carbone);
